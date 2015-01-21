@@ -44,7 +44,7 @@ namespace ASCOM.ArduinoST4
         }
 
         /// <summary>
-        /// Connects to the arduino with the given com port.
+        /// Connect to the arduino with the given com port.
         /// </summary>
         /// <param name="comPort"></param>
         public void Connect(String comPort)
@@ -64,17 +64,17 @@ namespace ASCOM.ArduinoST4
 
             //The arduino will send "INITIALIZED" by itself once it is ready (can take several seconds)
             String initialMessage = ReadResponse();
-            //Attempt to put the device in a connected state
+            //Reset device and light up the LED
             this.connected = CommandBool("CONNECT");
             if (!this.connected)
             {
+                //close serial connection when it failed
                 serialConnection.Connected = false;
-                serialConnection.Dispose();
             }
         }
 
         /// <summary>
-        /// Disconnects from the arduino
+        /// Disconnect from the arduino
         /// </summary>
         public void Disconnect()
         {
@@ -86,7 +86,7 @@ namespace ASCOM.ArduinoST4
         }
 
         /// <summary>
-        /// Returns true when connected
+        /// Return true when connected
         /// </summary>
         public bool Connected
         {
@@ -98,7 +98,7 @@ namespace ASCOM.ArduinoST4
         }
 
         /// <summary>
-        /// Sends the given command to the device.
+        /// Send the given command to the device.
         /// </summary>
         /// <param name="command">Command to send</param>
         /// <returns>true if it has been understood correctly</returns>
@@ -110,7 +110,7 @@ namespace ASCOM.ArduinoST4
         }
 
         /// <summary>
-        /// Sends the given command to the device.
+        /// Send the given command to the device.
         /// </summary>
         /// <param name="command">Command to send</param>
         /// <returns>Response returned by the device</returns>
@@ -123,7 +123,7 @@ namespace ASCOM.ArduinoST4
         }
 
         /// <summary>
-        /// Reads a response from the arduino and returns it
+        /// Read a response from the arduino and returns it
         /// </summary>
         private String ReadResponse()
         {
@@ -135,13 +135,18 @@ namespace ASCOM.ArduinoST4
         }
 
         /// <summary>
-        /// Tells the hardware to start / stop moving on the given axis.
+        /// Tell the hardware to start / stop moving on the given axis.
         /// If the given orientation is null, the movement will stop.
         /// </summary>
         /// <param name="axis">Axis to move</param>
         /// <param name="orientation">Orientation along the axis</param>
         public void Move(Axis axis, Orientation? orientation)
         {
+            //Do nothing if not connected
+            if (!this.Connected)
+            {
+                return;
+            }
             String axisName = axis.ToString();
             if (orientation == null)
             {

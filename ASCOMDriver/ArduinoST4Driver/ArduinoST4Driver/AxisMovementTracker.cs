@@ -46,7 +46,7 @@ namespace ASCOM.ArduinoST4
         }
 
         /// <summary>
-        /// Calculates the position delta from time represented by the slewStartTime property until now.
+        /// Calculate the position delta from time represented by the slewStartTime property until now.
         /// </summary>
         /// <returns></returns>
         private double CalculateCurrentPositionDelta()
@@ -91,7 +91,7 @@ namespace ASCOM.ArduinoST4
         }
 
         /// <summary>
-        /// Starts keeping track of the movement with the given slew rate
+        /// Start keeping track of the movement with the given slew rate
         /// </summary>
         /// <param name="slewRate">Rate at which the axis is moving</param>
         public void Start(double slewRate)
@@ -101,7 +101,7 @@ namespace ASCOM.ArduinoST4
         }
 
         /// <summary>
-        /// Stops keeping track of the movement
+        /// Stop keeping track of the movement
         /// </summary>
         public void Stop()
         {

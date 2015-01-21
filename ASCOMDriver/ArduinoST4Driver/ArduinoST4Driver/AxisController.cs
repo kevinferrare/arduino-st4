@@ -63,7 +63,7 @@ namespace ASCOM.ArduinoST4
         private double plusSlewRate;
 
         /// <summary>
-        /// Builds an AxisPositionController object.
+        /// Build an AxisPositionController object.
         /// 
         /// </summary>
         /// <param name="axis">Axis controlled by this object</param>
@@ -82,7 +82,7 @@ namespace ASCOM.ArduinoST4
         }
 
         /// <summary>
-        /// Returns the slew rate corresponding to the given orientation
+        /// Return the slew rate corresponding to the given orientation
         /// </summary>
         /// <param name="slewOrientation">Orientation for which the slew rate is requested</param>
         /// <returns></returns>
@@ -92,7 +92,7 @@ namespace ASCOM.ArduinoST4
         }
 
         /// <summary>
-        /// Returns an orientation from the given positive or negative slew rate.
+        /// Return an orientation from the given positive or negative slew rate.
         /// </summary>
         /// <param name="slewRate">Slew rate, eithe positive or negative</param>
         /// <returns></returns>
@@ -140,7 +140,7 @@ namespace ASCOM.ArduinoST4
         }
 
         /// <summary>
-        /// Moves the axis for the given time with the given orientation.
+        /// Move the axis for the given time with the given orientation.
         /// If provided time is null or async is true, will not wait for the move to complete.
         /// 
         /// <param name="moveDuration">Duration of the move, moves indefinitely if null</param>
@@ -178,8 +178,8 @@ namespace ASCOM.ArduinoST4
         }
 
         /// <summary>
-        /// Moves the axis with the given orientation.
-        /// Returns immediatly leaving the axis moving for as long as Stop or another move is not called.
+        /// Move the axis with the given orientation.
+        /// Return immediatly leaving the axis moving for as long as Stop or another move is not called.
         /// <param name="orientation">Orientation of the move</param>
         /// </summary>
         public void Move(Orientation orientation)
@@ -188,8 +188,8 @@ namespace ASCOM.ArduinoST4
         }
 
         /// <summary>
-        /// Moves the axis for the given duration with the given orientation.
-        /// Returns immediatly without waiting for the move to complete.
+        /// Move the axis for the given duration with the given orientation.
+        /// Return immediatly without waiting for the move to complete.
         /// <param name="moveDuration">Duration of the move</param>
         /// <param name="orientation">Orientation of the move</param>
         /// </summary>
@@ -200,8 +200,8 @@ namespace ASCOM.ArduinoST4
         }
 
         /// <summary>
-        /// Moves the axis until the position changes by the given positionDifference.
-        /// Returns immediatly without waiting for the move to complete.
+        /// Move the axis until the position changes by the given positionDifference.
+        /// Return immediatly without waiting for the move to complete.
         /// <param name="positionDifference">Value to add or remove to the current position</param>
         /// </summary>
         public void Move(double positionDifference)
@@ -215,7 +215,7 @@ namespace ASCOM.ArduinoST4
         }
 
         /// <summary>
-        /// Stops the hardware slew and aborts the waiting thread
+        /// Stop the hardware slew and aborts the waiting thread
         /// </summary>
         public void Stop()
         {
@@ -229,7 +229,7 @@ namespace ASCOM.ArduinoST4
         }
 
         /// <summary>
-        /// Waits for the axis to stop moving.
+        /// Wait for the axis to stop moving.
         /// Will return immediately if no asynchronous move is currently taking place.
         /// </summary>
         public void WaitAsyncMoveEnd()
@@ -240,7 +240,7 @@ namespace ASCOM.ArduinoST4
             }
         }
         /// <summary>
-        /// Waits the given amount of time, then stop the movement
+        /// Wait the given amount of time, then stop the movement
         /// </summary>
         private void WaitAndStop(TimeSpan moveDuration)
         {
@@ -250,22 +250,19 @@ namespace ASCOM.ArduinoST4
         }
 
         /// <summary>
-        /// Stops the movement and the position tracking
+        /// Stop the movement and the position tracking
         /// </summary>
         private void StopMovement()
         {
             //Stop the position tracking
             this.axisMovementTracker.Stop();
-            //Check for connection for the case when this method is called from Dispose
-            if (deviceController.Connected)
-            {
-                //Stop the hardware movement
-                this.deviceController.Move(this.axis, null);
-            }
+
+            //Stop the hardware movement
+            this.deviceController.Move(this.axis, null);
         }
 
         /// <summary>
-        /// Starts a thread that will execute WaitAndStop so that the waiting can be done in background.
+        /// Start a thread that will execute WaitAndStop so that the waiting can be done in background.
         /// Ensure that no other waiting thread for the axis is active before calling.
         /// </summary>
         private void WaitAndStopAsync(TimeSpan moveDuration)
