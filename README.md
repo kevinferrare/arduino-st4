@@ -28,13 +28,13 @@ The hardware is built from off the shelf cheap components, you can buy them from
 
 The connection between the components is as below:
 
-![Wiring](https://arduino-st4.googlecode.com/git/Hardware/diagram.png)
+![Wiring](https://raw.githubusercontent.com/kevinferrare/arduino-st4/master/Hardware/diagram.png)
 
 Be careful not to invert GND with some other pins.
 
 My first version looked like this (quick and dirty solders, very fragile!):
 
-![First prototype](https://arduino-st4.googlecode.com/git/Hardware/prototype.png)
+![First prototype](https://raw.githubusercontent.com/kevinferrare/arduino-st4/master/Hardware/prototype_small.png)
 
 ## Flashing the arduino
 Once the hardware is built, you have to upload the code to the arduino.
@@ -72,14 +72,14 @@ https://drive.google.com/open?id=0B04IJvbw0nqmeHJLQS13eVotQ3M&authuser=0
   * Open the connection dialog
   * Select the "ArduinoST4 telescope driver"
 
-![Driver Selection](https://arduino-st4.googlecode.com/git/Wiki/DriverSelection.png)
+![Driver Selection](https://raw.githubusercontent.com/kevinferrare/arduino-st4/master/Wiki/DriverSelection.png)
 
 If you couldn't find it, there was a problem with the driver installation.
   * Click on "Properties" to configure it
     * Put in com port the name of the port on which the arduino is connected
     * Modify if needed the different slewing rates (multiple of sideral rate, 1X = earth rotation rate).
 
-![Driver Configuration](https://arduino-st4.googlecode.com/git/Wiki/DriverConfiguration.png)
+![Driver Configuration](https://raw.githubusercontent.com/kevinferrare/arduino-st4/master/Wiki/DriverConfiguration.png)
 
 The default settings work fine for my EQ5 mount with the speed switch on the 8X position.
 
@@ -87,7 +87,7 @@ Please note that RA+ and RA- value is not 8, this is because of the earth rotati
 
 Everything plugged in:
 
-![Telescope setup picture](https://arduino-st4.googlecode.com/git/Hardware/plugged_into_scope_small.jpg)
+![Telescope setup picture](https://raw.githubusercontent.com/kevinferrare/arduino-st4/master/Hardware/plugged_into_scope_small.jpg)
 
 Video of the telescope slewing:
 
