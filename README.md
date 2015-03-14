@@ -105,3 +105,6 @@ If the polar alignment is good, GOTO will be precise enough. Most of the times, 
   * Write an [indi](http://www.indilib.org/) driver.
   * Cleanup ASCOM boilerplate (API had to be implemented through trial and error due to lack of details in documentation).
   * Test the driver on more configurations, especially windows 32 bits.
+
+# License
+This project is licensed under the GNU LGPL v3
