@@ -1,7 +1,7 @@
 # Purpose
 The purpose of this project is to connect a telescope to a computer through the mount guide port (ST-4 port) using an arduino. This is similar to [GPUSB](http://www.store.shoestringastronomy.com/gpusb.htm).
 
-The ST-4 Port is present on some computerized mounts and it is easy to [add one](http://thx8411.over-blog.com/pages/Add_an_ST4_port_on_the_EQ4EQ5_motor_drives-3258969.html) to motorized mounts like the EQ4 or EQ5. Refer to [this](http://www.store.shoestringastronomy.com/downloads/HCModGuidance.pdf) for other mounts modifications.
+The ST-4 Port is present on some computerized mounts and it is easy to [add one](http://thx8411.over-blog.com/pages/Add_an_ST4_port_on_the_EQ4EQ5_motor_drives-3258969.html) to motorized mounts like the EQ3 / EQ4 / EQ5. Refer to [this](http://www.store.shoestringastronomy.com/downloads/HCModGuidance.pdf) for other mounts modifications.
 
 Building your own ST-4 adapter costs less than available commercial solutions (~6 USD) and on the top of providing autoguiding, the custom driver also has a working GOTO functionality.
 
