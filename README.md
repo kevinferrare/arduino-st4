@@ -77,7 +77,7 @@ https://drive.google.com/open?id=0B04IJvbw0nqmeHJLQS13eVotQ3M&authuser=0
 If you couldn't find it, there was a problem with the driver installation.
   * Click on "Properties" to configure it
     * Put in com port the name of the port on which the arduino is connected
-    * Modify if needed the different slewing rates (multiple of sideral rate, 1X = earth rotation rate).
+    * Modify if needed the different slewing rates in order to match the axis rates of the mount (multiple of sideral rate, 1X = earth rotation rate).
 
 ![Driver Configuration](https://raw.githubusercontent.com/kevinferrare/arduino-st4/master/Wiki/DriverConfiguration.png)
 
