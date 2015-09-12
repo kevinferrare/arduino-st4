@@ -39,7 +39,7 @@ My first version looked like this (quick and dirty solders, very fragile!):
 ## Flashing the arduino
 Once the hardware is built, you have to upload the code to the arduino.
   * Download the [arduino IDE](http://arduino.cc/en/main/software#toc1)
-  * Download the [firmware](https://arduino-st4.googlecode.com/git/ArduinoCode/ArduinoCode.ino)
+  * Download the [firmware](https://github.com/kevinferrare/arduino-st4/releases/download/1.0/ArduinoCode.ino)
   * Connect your arduino to your PC, open the downloaded .ino file with the IDE and click on the upload button (there are plenty of tutorials on the internet describing how to upload code to an arduino if you need more details)
 
 At this point, you should be able to send commands to the arduino through the serial monitor of the IDE and to test if you can control you telescope axes.
@@ -65,7 +65,7 @@ If the telescope is not behaving as expected, check your connections, you may ha
 First, please check that the [ASCOM platform](http://ascom-standards.org/) v6.0 (or higher) is installed on your computer.
 
 Then download and run the installer:
-https://drive.google.com/open?id=0B04IJvbw0nqmeHJLQS13eVotQ3M&authuser=0
+https://github.com/kevinferrare/arduino-st4/releases/download/1.0/ArduinoST4.Setup.exe
 
 ## Configuring the driver
   * Open any software you would like to use with your telescope (for example [cartes du ciel](http://www.ap-i.net/skychart/en/start) or [PHD](http://www.stark-labs.com/phdguiding.html))
