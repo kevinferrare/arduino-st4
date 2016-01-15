@@ -25,6 +25,7 @@ The hardware is built from off the shelf cheap components, you can buy them from
   * An optocoupler (I used the TLP521-4).
   * A RJ12 socket.
   * A RJ12 straight cable.
+  * A bunch of 100 Ohm resistors to protect the optocoupler leds (it works without those as well)
 
 The connection between the components is as below:
 
@@ -42,7 +43,7 @@ Once the hardware is built, you have to upload the code to the arduino.
   * Download the [firmware](https://github.com/kevinferrare/arduino-st4/releases/download/1.0/ArduinoCode.ino)
   * Connect your arduino to your PC, open the downloaded .ino file with the IDE and click on the upload button (there are plenty of tutorials on the internet describing how to upload code to an arduino if you need more details)
 
-At this point, you should be able to send commands to the arduino through the serial monitor of the IDE and to test if you can control you telescope axes.
+At this point, you should be able to send commands to the arduino through the serial monitor of the IDE and to test if you can control you telescope axes (bitrate is 57.6k, if you see garbled output, you might want to check this).
 
 Accepted commands are:
 
