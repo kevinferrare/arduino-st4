@@ -102,6 +102,9 @@ GOTO will be slow, going from andromeda to the pleiades takes 20 minutes with 8X
 
 If the polar alignment is good, GOTO will be precise enough. Most of the times, the object is right in the center of the eyepiece :)
 
+# Indi driver
+Thanks to Stephan for implementing a basic [indi driver](https://github.com/tliff/indi_ardust4) that can do autoguiding.
+
 # Todo
   * Write an [indi](http://www.indilib.org/) driver.
   * Cleanup ASCOM boilerplate (API had to be implemented through trial and error due to lack of details in documentation).
