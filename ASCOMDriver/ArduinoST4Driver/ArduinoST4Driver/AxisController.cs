@@ -62,6 +62,8 @@ namespace ASCOM.ArduinoST4
         /// </summary>
         private double plusSlewRate;
 
+        private bool inverted;
+
         /// <summary>
         /// Build an AxisPositionController object.
         /// 
@@ -70,7 +72,8 @@ namespace ASCOM.ArduinoST4
         /// <param name="deviceController">Actual hardware controller</param>
         /// <param name="minusSlewRate">Slew rate to use when moving in the MINUS orientation</param>
         /// <param name="plusSlewRate">Slew rate to use when moving in the PLUS orientation</param>
-        public AxisController(Axis axis, DeviceController deviceController, double minusSlewRate, double plusSlewRate)
+        /// <param name="inverted">Whether to invert the orientation to give to the mount</param>
+        public AxisController(Axis axis, DeviceController deviceController, double minusSlewRate, double plusSlewRate, bool inverted)
         {
             this.traceLogger = new TraceLogger("", "ArduinoST4 AxisPositionController " + axis.ToString());
             this.traceLogger.Enabled = true;
@@ -78,6 +81,7 @@ namespace ASCOM.ArduinoST4
             this.deviceController = deviceController;
             this.minusSlewRate = minusSlewRate;
             this.plusSlewRate = plusSlewRate;
+            this.inverted = inverted;
             this.axisMovementTracker = new AxisMovementTracker();
         }
 
@@ -99,6 +103,15 @@ namespace ASCOM.ArduinoST4
         private Orientation CalculateOrientation(double slewRate)
         {
             return slewRate > 0 ? Orientation.PLUS : Orientation.MINUS;
+        }
+
+        /// <summary>
+        /// Calculates the mount actual orientation taking in account potential axis inversion
+        /// <param name="orientation">Orientation to move the axis (+ or -)</param>
+        /// </summary>
+        private Orientation CalculateMountOrientation(Orientation orientation)
+        {
+            return orientation.Invert(this.inverted);
         }
 
         /// <summary>
@@ -159,10 +172,13 @@ namespace ASCOM.ArduinoST4
                 //Nothing to do :)
                 return;
             }
+            // Orientation changes if the axis is inverted
+            Orientation mountOrientation = CalculateMountOrientation(orientation);
             //Tell the device to move
-            this.deviceController.Move(this.axis, orientation);
+            this.deviceController.Move(this.axis, mountOrientation);
             //Start tracking move position
-            this.axisMovementTracker.Start(this.CalculateSlewRate(orientation));
+            //Slew rate has to be the actual hardware slew rate, so take in account the orientation given to the mount
+            this.axisMovementTracker.Start(this.CalculateSlewRate(mountOrientation));
             //Respect the duration if it has been specified
             if (moveDuration != null)
             {

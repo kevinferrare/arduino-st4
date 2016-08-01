@@ -10,25 +10,60 @@ namespace ASCOM.ArduinoST4
         public SetupDialogForm()
         {
             InitializeComponent();
-            populateSerialComboBox();
+            populateSerialComboBox(Telescope.comPort);
+            populateHemisphereComboBox(Telescope.hemisphere);
             // Initialise current values of user settings from the ASCOM Profile 
-            this.comPortComboBox.Text = Telescope.comPort;
             this.traceStateCheckBox.Checked = Telescope.traceState;
             this.rightAscensionPlusSideralRateTextBox.Text = Telescope.rightAscensionSideralRatePlus.ToString();
             this.rightAscensionMinusSideralRateTextBox.Text = Telescope.rightAscensionSideralRateMinus.ToString();
             this.declinationPlusSideralRateTextBox.Text = Telescope.declinationSideralRatePlus.ToString();
             this.declinationMinusSideralRateTextBox.Text = Telescope.declinationSideralRateMinus.ToString();
+            this.mountCompensatesEarthRotationInSlewCheckBox.Checked = Telescope.mountCompensatesEarthRotationInSlew;
+            this.meridianFlipCheckBox.Checked = Telescope.meridianFlip;
         }
 
         /// <summary>
         /// Reads the available COM ports on the computer and adds them to the COM Port combobox
         /// </summary>
-        private void populateSerialComboBox()
+        private void populateSerialComboBox(string selected)
         {
             string[] serialPorts = System.IO.Ports.SerialPort.GetPortNames();
-            foreach (string serialPort in serialPorts)
+            Array.Sort(serialPorts);
+            fillComboBoxFromArray(this.comPortComboBox, serialPorts, selected);
+        }
+
+        /// <summary>
+        /// Fills the hemishpere combobox with available values
+        /// </summary>
+        private void populateHemisphereComboBox(string selected)
+        {
+            string[] hemispheres = { Constants.NORTHERN_HEMISPHERE, Constants.SOUTHERN_HEMISPHERE };
+            fillComboBoxFromArray(this.hemisphereComboBox, hemispheres, selected);
+        }
+  
+        /// <summary>
+        /// Fills a combobox with the given string values
+        /// </summary>
+        private void fillComboBoxFromArray(ComboBox combobox, string[] values, string selected)
+        {
+            combobox.Items.Clear();
+            if (values.Length == 0)
             {
-                this.comPortComboBox.Items.Add(serialPort);
+                return;
+            }
+            bool selectionOccurred = false;
+            foreach (string value in values)
+            {
+                combobox.Items.Add(value);
+                if (value == selected)
+                {
+                    combobox.Text = value;
+                    selectionOccurred = true;
+                }
+            }
+            if (!selectionOccurred)
+            {
+                combobox.Text = values[0];
             }
         }
 
@@ -41,6 +76,9 @@ namespace ASCOM.ArduinoST4
             Telescope.rightAscensionSideralRateMinus = Convert.ToDouble(this.rightAscensionMinusSideralRateTextBox.Text);
             Telescope.declinationSideralRatePlus = Convert.ToDouble(this.declinationPlusSideralRateTextBox.Text);
             Telescope.declinationSideralRateMinus = Convert.ToDouble(this.declinationMinusSideralRateTextBox.Text);
+            Telescope.mountCompensatesEarthRotationInSlew = this.mountCompensatesEarthRotationInSlewCheckBox.Checked;
+            Telescope.hemisphere = this.hemisphereComboBox.Text;
+            Telescope.meridianFlip = this.meridianFlipCheckBox.Checked;
         }
 
         private void cmdCancel_Click(object sender, EventArgs e) // Cancel button event handler
@@ -63,11 +101,6 @@ namespace ASCOM.ArduinoST4
             {
                 MessageBox.Show(other.Message);
             }
-        }
-
-        private void SetupDialogForm_Load(object sender, EventArgs e)
-        {
-
         }
     }
 }

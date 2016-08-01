@@ -57,10 +57,15 @@ namespace ASCOM.ArduinoST4
         /// <summary>
         /// Right ascension and declination speed of the device in sideral multiple (earth rotation multiple)
         /// </summary>
-        internal static double rightAscensionSideralRatePlus = 9;//8X Sideral Rate + 1 for earth rotation
-        internal static double rightAscensionSideralRateMinus = 7;//8X Sideral Rate - 1 for earth rotation
+        internal static double rightAscensionSideralRatePlus = 8;
+        internal static double rightAscensionSideralRateMinus = 8;
         internal static double declinationSideralRatePlus = 8;
         internal static double declinationSideralRateMinus = 8;
+        internal static bool mountCompensatesEarthRotationInSlew = false;
+
+        internal static string hemisphere = Constants.NORTHERN_HEMISPHERE;
+
+        internal static bool meridianFlip = false;
 
         /// <summary>
         /// COM port for arduino access
@@ -102,17 +107,44 @@ namespace ASCOM.ArduinoST4
         {
             // Read device configuration from the ASCOM Profile store
             ReadProfile();
-
+            // Take values in account
+            Init();
+        }
+        /// <summary>
+        /// Initializes the driver from the values stored in static variables
+        /// </summary>
+        public void Init()
+        {
             traceLogger = new TraceLogger("", "ArduinoST4");
             traceLogger.Enabled = traceState;
             traceLogger.LogMessage("Telescope", "Starting initialisation");
 
             deviceController = new DeviceController();
 
+            //Determinate axes inversion
+            bool invertRA = (hemisphere == Constants.SOUTHERN_HEMISPHERE);
+            bool invertDEC = ((hemisphere == Constants.SOUTHERN_HEMISPHERE) ^ meridianFlip);
+
+            double compensatedRightAscensionSideralRateMinus = rightAscensionSideralRateMinus;
+            double compensatedRightAscensionSideralRatePlus = rightAscensionSideralRatePlus;
+            if (!mountCompensatesEarthRotationInSlew)
+            {
+                //Compensates in software for the earth rotation while slewing
+                if (!invertRA)
+                {
+                    compensatedRightAscensionSideralRateMinus -= 1;//Sideral Rate -1 for earth rotation
+                    compensatedRightAscensionSideralRatePlus += 1;//Sideral Rate +1 for earth rotation
+                }
+                else
+                {
+                    compensatedRightAscensionSideralRateMinus += 1;
+                    compensatedRightAscensionSideralRatePlus -= 1;
+                }
+            }
             //Setup the axes
             axisControllers = new AxisController[2];
-            axisControllers[(int)Axis.RA] = new AxisController(Axis.RA, this.deviceController, -Constants.RA_PER_SECOND * rightAscensionSideralRateMinus, Constants.RA_PER_SECOND * rightAscensionSideralRatePlus);
-            axisControllers[(int)Axis.DEC] = new AxisController(Axis.DEC, this.deviceController, -Constants.DEGREES_PER_SECOND * declinationSideralRateMinus, Constants.DEGREES_PER_SECOND * declinationSideralRatePlus);
+            axisControllers[(int)Axis.RA] = new AxisController(Axis.RA, this.deviceController, -Constants.RA_PER_SECOND * compensatedRightAscensionSideralRateMinus, Constants.RA_PER_SECOND * compensatedRightAscensionSideralRatePlus, invertRA);
+            axisControllers[(int)Axis.DEC] = new AxisController(Axis.DEC, this.deviceController, -Constants.DEGREES_PER_SECOND * declinationSideralRateMinus, Constants.DEGREES_PER_SECOND * declinationSideralRatePlus, invertDEC);
             traceLogger.LogMessage("Telescope", "Completed initialisation");
         }
 
@@ -139,7 +171,10 @@ namespace ASCOM.ArduinoST4
                 var result = setupDialogForm.ShowDialog();
                 if (result == System.Windows.Forms.DialogResult.OK)
                 {
-                    WriteProfile(); // Persist device configuration values to the ASCOM Profile store
+                    // Persist device configuration values to the ASCOM Profile store
+                    WriteProfile();
+                    // Take in account new values
+                    Init();
                 }
             }
         }
@@ -793,10 +828,13 @@ namespace ASCOM.ArduinoST4
                 driverProfile.DeviceType = "Telescope";
                 traceState = ReadBoolFromProfile(driverProfile, "traceState", traceState);
                 comPort = ReadStringFromProfile(driverProfile, "comPort", comPort);
-                rightAscensionSideralRatePlus = ReadDoubleFromProfile(driverProfile, "rightAscensionSideralRatePlus", rightAscensionSideralRatePlus);
-                rightAscensionSideralRateMinus = ReadDoubleFromProfile(driverProfile, "rightAscensionSideralRateMinus", rightAscensionSideralRateMinus);
+                rightAscensionSideralRatePlus = ReadDoubleFromProfile(driverProfile, "rightAscensionSideralRatePlus2", rightAscensionSideralRatePlus);
+                rightAscensionSideralRateMinus = ReadDoubleFromProfile(driverProfile, "rightAscensionSideralRateMinus2", rightAscensionSideralRateMinus);
                 declinationSideralRatePlus = ReadDoubleFromProfile(driverProfile, "declinationSideralRatePlus", declinationSideralRatePlus);
                 declinationSideralRateMinus = ReadDoubleFromProfile(driverProfile, "declinationSideralRateMinus", declinationSideralRateMinus);
+                mountCompensatesEarthRotationInSlew= ReadBoolFromProfile(driverProfile, "mountCompensatesEarthRotationInSlew", mountCompensatesEarthRotationInSlew);
+                hemisphere = ReadStringFromProfile(driverProfile, "hemisphere", hemisphere);
+                meridianFlip = ReadBoolFromProfile(driverProfile, "meridianFlip", meridianFlip);
             }
         }
 
@@ -825,10 +863,13 @@ namespace ASCOM.ArduinoST4
                 driverProfile.DeviceType = "Telescope";
                 driverProfile.WriteValue(driverID, "traceState", traceState.ToString());
                 driverProfile.WriteValue(driverID, "comPort", comPort.ToString());
-                driverProfile.WriteValue(driverID, "rightAscensionSideralRatePlus", rightAscensionSideralRatePlus.ToString());
-                driverProfile.WriteValue(driverID, "rightAscensionSideralRateMinus", rightAscensionSideralRateMinus.ToString());
+                driverProfile.WriteValue(driverID, "rightAscensionSideralRatePlus2", rightAscensionSideralRatePlus.ToString());
+                driverProfile.WriteValue(driverID, "rightAscensionSideralRateMinus2", rightAscensionSideralRateMinus.ToString());
                 driverProfile.WriteValue(driverID, "declinationSideralRatePlus", declinationSideralRatePlus.ToString());
                 driverProfile.WriteValue(driverID, "declinationSideralRateMinus", declinationSideralRateMinus.ToString());
+                driverProfile.WriteValue(driverID, "mountCompensatesEarthRotationInSlew", mountCompensatesEarthRotationInSlew.ToString());
+                driverProfile.WriteValue(driverID, "hemisphere", hemisphere);
+                driverProfile.WriteValue(driverID, "meridianFlip", meridianFlip.ToString());
             }
         }
 

@@ -30,7 +30,6 @@ namespace ASCOM.ArduinoST4
         {
             this.cmdOK = new System.Windows.Forms.Button();
             this.cmdCancel = new System.Windows.Forms.Button();
-            this.commentLabel = new System.Windows.Forms.Label();
             this.picASCOM = new System.Windows.Forms.PictureBox();
             this.comPortComboBox = new System.Windows.Forms.ComboBox();
             this.comPortLabel = new System.Windows.Forms.Label();
@@ -45,18 +44,26 @@ namespace ASCOM.ArduinoST4
             this.declinationMinusSideralRateTextBox = new System.Windows.Forms.TextBox();
             this.axisSideralRatesGroupBox = new System.Windows.Forms.GroupBox();
             this.axisSideralRatesPanel = new System.Windows.Forms.Panel();
+            this.mountCompensatesEarthRotationInSlewCheckBox = new System.Windows.Forms.CheckBox();
             this.connectionGroupBox = new System.Windows.Forms.GroupBox();
+            this.axisOrientationGroupBox = new System.Windows.Forms.GroupBox();
+            this.axisOrientationPanel = new System.Windows.Forms.Panel();
+            this.hemisphereComboBox = new System.Windows.Forms.ComboBox();
+            this.meridianFlipCheckBox = new System.Windows.Forms.CheckBox();
+            this.hemisphereLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.picASCOM)).BeginInit();
             this.axisSideralRatesGroupBox.SuspendLayout();
             this.axisSideralRatesPanel.SuspendLayout();
             this.connectionGroupBox.SuspendLayout();
+            this.axisOrientationGroupBox.SuspendLayout();
+            this.axisOrientationPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // cmdOK
             // 
             this.cmdOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.cmdOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.cmdOK.Location = new System.Drawing.Point(281, 164);
+            this.cmdOK.Location = new System.Drawing.Point(281, 246);
             this.cmdOK.Name = "cmdOK";
             this.cmdOK.Size = new System.Drawing.Size(59, 24);
             this.cmdOK.TabIndex = 0;
@@ -68,21 +75,13 @@ namespace ASCOM.ArduinoST4
             // 
             this.cmdCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.cmdCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cmdCancel.Location = new System.Drawing.Point(281, 194);
+            this.cmdCancel.Location = new System.Drawing.Point(281, 276);
             this.cmdCancel.Name = "cmdCancel";
             this.cmdCancel.Size = new System.Drawing.Size(59, 25);
             this.cmdCancel.TabIndex = 1;
             this.cmdCancel.Text = "Cancel";
             this.cmdCancel.UseVisualStyleBackColor = true;
             this.cmdCancel.Click += new System.EventHandler(this.cmdCancel_Click);
-            // 
-            // commentLabel
-            // 
-            this.commentLabel.Location = new System.Drawing.Point(12, 9);
-            this.commentLabel.Name = "commentLabel";
-            this.commentLabel.Size = new System.Drawing.Size(86, 17);
-            this.commentLabel.TabIndex = 2;
-            this.commentLabel.Text = "Driver setup";
             // 
             // picASCOM
             // 
@@ -98,11 +97,11 @@ namespace ASCOM.ArduinoST4
             this.picASCOM.Click += new System.EventHandler(this.BrowseToAscom);
             this.picASCOM.DoubleClick += new System.EventHandler(this.BrowseToAscom);
             // 
-            // comPortTextBox
+            // comPortComboBox
             // 
-            this.comPortComboBox.Location = new System.Drawing.Point(109, 10);
+            this.comPortComboBox.Location = new System.Drawing.Point(120, 9);
             this.comPortComboBox.Name = "comPortComboBox";
-            this.comPortComboBox.Size = new System.Drawing.Size(82, 20);
+            this.comPortComboBox.Size = new System.Drawing.Size(129, 21);
             this.comPortComboBox.TabIndex = 4;
             // 
             // comPortLabel
@@ -117,7 +116,7 @@ namespace ASCOM.ArduinoST4
             // traceStateCheckBox
             // 
             this.traceStateCheckBox.AutoSize = true;
-            this.traceStateCheckBox.Location = new System.Drawing.Point(12, 202);
+            this.traceStateCheckBox.Location = new System.Drawing.Point(12, 287);
             this.traceStateCheckBox.Name = "traceStateCheckBox";
             this.traceStateCheckBox.Size = new System.Drawing.Size(79, 17);
             this.traceStateCheckBox.TabIndex = 6;
@@ -162,44 +161,45 @@ namespace ASCOM.ArduinoST4
             // 
             // rightAscensionPlusSideralRateTextBox
             // 
-            this.rightAscensionPlusSideralRateTextBox.Location = new System.Drawing.Point(103, 5);
+            this.rightAscensionPlusSideralRateTextBox.Location = new System.Drawing.Point(114, 3);
             this.rightAscensionPlusSideralRateTextBox.Name = "rightAscensionPlusSideralRateTextBox";
-            this.rightAscensionPlusSideralRateTextBox.Size = new System.Drawing.Size(82, 20);
+            this.rightAscensionPlusSideralRateTextBox.Size = new System.Drawing.Size(126, 20);
             this.rightAscensionPlusSideralRateTextBox.TabIndex = 11;
             // 
             // rightAscensionMinusSideralRateTextBox
             // 
-            this.rightAscensionMinusSideralRateTextBox.Location = new System.Drawing.Point(103, 30);
+            this.rightAscensionMinusSideralRateTextBox.Location = new System.Drawing.Point(114, 28);
             this.rightAscensionMinusSideralRateTextBox.Name = "rightAscensionMinusSideralRateTextBox";
-            this.rightAscensionMinusSideralRateTextBox.Size = new System.Drawing.Size(82, 20);
+            this.rightAscensionMinusSideralRateTextBox.Size = new System.Drawing.Size(126, 20);
             this.rightAscensionMinusSideralRateTextBox.TabIndex = 12;
             // 
             // declinationPlusSideralRateTextBox
             // 
-            this.declinationPlusSideralRateTextBox.Location = new System.Drawing.Point(103, 55);
+            this.declinationPlusSideralRateTextBox.Location = new System.Drawing.Point(114, 53);
             this.declinationPlusSideralRateTextBox.Name = "declinationPlusSideralRateTextBox";
-            this.declinationPlusSideralRateTextBox.Size = new System.Drawing.Size(82, 20);
+            this.declinationPlusSideralRateTextBox.Size = new System.Drawing.Size(126, 20);
             this.declinationPlusSideralRateTextBox.TabIndex = 13;
             // 
             // declinationMinusSideralRateTextBox
             // 
-            this.declinationMinusSideralRateTextBox.Location = new System.Drawing.Point(103, 80);
+            this.declinationMinusSideralRateTextBox.Location = new System.Drawing.Point(114, 79);
             this.declinationMinusSideralRateTextBox.Name = "declinationMinusSideralRateTextBox";
-            this.declinationMinusSideralRateTextBox.Size = new System.Drawing.Size(82, 20);
+            this.declinationMinusSideralRateTextBox.Size = new System.Drawing.Size(126, 20);
             this.declinationMinusSideralRateTextBox.TabIndex = 14;
             // 
             // axisSideralRatesGroupBox
             // 
             this.axisSideralRatesGroupBox.Controls.Add(this.axisSideralRatesPanel);
-            this.axisSideralRatesGroupBox.Location = new System.Drawing.Point(12, 71);
+            this.axisSideralRatesGroupBox.Location = new System.Drawing.Point(12, 51);
             this.axisSideralRatesGroupBox.Name = "axisSideralRatesGroupBox";
-            this.axisSideralRatesGroupBox.Size = new System.Drawing.Size(203, 123);
+            this.axisSideralRatesGroupBox.Size = new System.Drawing.Size(255, 149);
             this.axisSideralRatesGroupBox.TabIndex = 15;
             this.axisSideralRatesGroupBox.TabStop = false;
             this.axisSideralRatesGroupBox.Text = "Axis Sideral Rates";
             // 
             // axisSideralRatesPanel
             // 
+            this.axisSideralRatesPanel.Controls.Add(this.mountCompensatesEarthRotationInSlewCheckBox);
             this.axisSideralRatesPanel.Controls.Add(this.rightAscensionPlusSideralRateLabel);
             this.axisSideralRatesPanel.Controls.Add(this.declinationMinusSideralRateTextBox);
             this.axisSideralRatesPanel.Controls.Add(this.rightAscensionPlusSideralRateTextBox);
@@ -210,30 +210,88 @@ namespace ASCOM.ArduinoST4
             this.axisSideralRatesPanel.Controls.Add(this.declinationPlusSideralRateLabel);
             this.axisSideralRatesPanel.Location = new System.Drawing.Point(6, 13);
             this.axisSideralRatesPanel.Name = "axisSideralRatesPanel";
-            this.axisSideralRatesPanel.Size = new System.Drawing.Size(188, 105);
+            this.axisSideralRatesPanel.Size = new System.Drawing.Size(243, 130);
             this.axisSideralRatesPanel.TabIndex = 16;
+            // 
+            // mountCompensatesEarthRotationInSlewCheckBox
+            // 
+            this.mountCompensatesEarthRotationInSlewCheckBox.AutoSize = true;
+            this.mountCompensatesEarthRotationInSlewCheckBox.Location = new System.Drawing.Point(9, 110);
+            this.mountCompensatesEarthRotationInSlewCheckBox.Name = "mountCompensatesEarthRotationInSlewCheckBox";
+            this.mountCompensatesEarthRotationInSlewCheckBox.Size = new System.Drawing.Size(232, 17);
+            this.mountCompensatesEarthRotationInSlewCheckBox.TabIndex = 15;
+            this.mountCompensatesEarthRotationInSlewCheckBox.Text = "Mount Compensates Earth Rotation In Slew";
+            this.mountCompensatesEarthRotationInSlewCheckBox.UseVisualStyleBackColor = true;
             // 
             // connectionGroupBox
             // 
             this.connectionGroupBox.Controls.Add(this.comPortLabel);
             this.connectionGroupBox.Controls.Add(this.comPortComboBox);
-            this.connectionGroupBox.Location = new System.Drawing.Point(15, 29);
+            this.connectionGroupBox.Location = new System.Drawing.Point(12, 9);
             this.connectionGroupBox.Name = "connectionGroupBox";
-            this.connectionGroupBox.Size = new System.Drawing.Size(200, 36);
+            this.connectionGroupBox.Size = new System.Drawing.Size(255, 36);
             this.connectionGroupBox.TabIndex = 16;
             this.connectionGroupBox.TabStop = false;
             this.connectionGroupBox.Text = "Connection";
+            // 
+            // axisOrientationGroupBox
+            // 
+            this.axisOrientationGroupBox.Controls.Add(this.axisOrientationPanel);
+            this.axisOrientationGroupBox.Location = new System.Drawing.Point(12, 206);
+            this.axisOrientationGroupBox.Name = "axisOrientationGroupBox";
+            this.axisOrientationGroupBox.Size = new System.Drawing.Size(255, 75);
+            this.axisOrientationGroupBox.TabIndex = 17;
+            this.axisOrientationGroupBox.TabStop = false;
+            this.axisOrientationGroupBox.Text = "Axis Orientation";
+            // 
+            // axisOrientationPanel
+            // 
+            this.axisOrientationPanel.Controls.Add(this.hemisphereComboBox);
+            this.axisOrientationPanel.Controls.Add(this.meridianFlipCheckBox);
+            this.axisOrientationPanel.Controls.Add(this.hemisphereLabel);
+            this.axisOrientationPanel.Location = new System.Drawing.Point(6, 13);
+            this.axisOrientationPanel.Name = "axisOrientationPanel";
+            this.axisOrientationPanel.Size = new System.Drawing.Size(241, 56);
+            this.axisOrientationPanel.TabIndex = 16;
+            // 
+            // hemisphereComboBox
+            // 
+            this.hemisphereComboBox.BackColor = System.Drawing.SystemColors.Window;
+            this.hemisphereComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.hemisphereComboBox.Location = new System.Drawing.Point(114, 3);
+            this.hemisphereComboBox.Name = "hemisphereComboBox";
+            this.hemisphereComboBox.Size = new System.Drawing.Size(124, 21);
+            this.hemisphereComboBox.TabIndex = 18;
+            // 
+            // meridianFlipCheckBox
+            // 
+            this.meridianFlipCheckBox.AutoSize = true;
+            this.meridianFlipCheckBox.Location = new System.Drawing.Point(9, 32);
+            this.meridianFlipCheckBox.Name = "meridianFlipCheckBox";
+            this.meridianFlipCheckBox.Size = new System.Drawing.Size(82, 17);
+            this.meridianFlipCheckBox.TabIndex = 18;
+            this.meridianFlipCheckBox.Text = "Meridian flip";
+            this.meridianFlipCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // hemisphereLabel
+            // 
+            this.hemisphereLabel.AutoSize = true;
+            this.hemisphereLabel.Location = new System.Drawing.Point(6, 10);
+            this.hemisphereLabel.Name = "hemisphereLabel";
+            this.hemisphereLabel.Size = new System.Drawing.Size(79, 13);
+            this.hemisphereLabel.TabIndex = 7;
+            this.hemisphereLabel.Text = "Hemisphere flip";
             // 
             // SetupDialogForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(350, 227);
+            this.ClientSize = new System.Drawing.Size(350, 309);
+            this.Controls.Add(this.axisOrientationGroupBox);
             this.Controls.Add(this.connectionGroupBox);
             this.Controls.Add(this.axisSideralRatesGroupBox);
             this.Controls.Add(this.traceStateCheckBox);
             this.Controls.Add(this.picASCOM);
-            this.Controls.Add(this.commentLabel);
             this.Controls.Add(this.cmdCancel);
             this.Controls.Add(this.cmdOK);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
@@ -243,13 +301,15 @@ namespace ASCOM.ArduinoST4
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "ArduinoST4 Setup";
-            this.Load += new System.EventHandler(this.SetupDialogForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.picASCOM)).EndInit();
             this.axisSideralRatesGroupBox.ResumeLayout(false);
             this.axisSideralRatesPanel.ResumeLayout(false);
             this.axisSideralRatesPanel.PerformLayout();
             this.connectionGroupBox.ResumeLayout(false);
             this.connectionGroupBox.PerformLayout();
+            this.axisOrientationGroupBox.ResumeLayout(false);
+            this.axisOrientationPanel.ResumeLayout(false);
+            this.axisOrientationPanel.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -259,7 +319,6 @@ namespace ASCOM.ArduinoST4
 
         private System.Windows.Forms.Button cmdOK;
         private System.Windows.Forms.Button cmdCancel;
-        private System.Windows.Forms.Label commentLabel;
         private System.Windows.Forms.PictureBox picASCOM;
         private System.Windows.Forms.ComboBox comPortComboBox;
         private System.Windows.Forms.Label comPortLabel;
@@ -275,5 +334,11 @@ namespace ASCOM.ArduinoST4
         private System.Windows.Forms.GroupBox axisSideralRatesGroupBox;
         private System.Windows.Forms.Panel axisSideralRatesPanel;
         private System.Windows.Forms.GroupBox connectionGroupBox;
+        private System.Windows.Forms.GroupBox axisOrientationGroupBox;
+        private System.Windows.Forms.Panel axisOrientationPanel;
+        private System.Windows.Forms.Label hemisphereLabel;
+        private System.Windows.Forms.ComboBox hemisphereComboBox;
+        private System.Windows.Forms.CheckBox meridianFlipCheckBox;
+        private System.Windows.Forms.CheckBox mountCompensatesEarthRotationInSlewCheckBox;
     }
 }

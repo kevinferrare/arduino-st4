@@ -23,5 +23,7 @@ namespace ASCOM.ArduinoST4
     {
         public const double DEGREES_PER_SECOND = 360d / (24d * 3600d);
         public const double RA_PER_SECOND = 1d / 3600d;
+        public const string NORTHERN_HEMISPHERE = "Northern";
+        public const string SOUTHERN_HEMISPHERE = "Southern";
     }
 }

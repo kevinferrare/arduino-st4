@@ -18,8 +18,38 @@ namespace ASCOM.ArduinoST4
     /// <summary>
     /// Orientation of the movement along an axis. Can be forward (PLUS) or backward (MINUS)
     /// </summary>
-    enum Orientation
+    public enum Orientation
     {
         PLUS, MINUS
+    }
+
+    public static class OrientationExtensions
+    {
+        /// <summary>
+        /// Inverts the given orientation
+        /// <param name="orientation">Orientation invert, + will give - and - will give +</param>
+        /// </summary>
+        public static Orientation Invert(this Orientation orientation)
+        {
+            if (orientation == Orientation.PLUS)
+            {
+                return Orientation.MINUS;
+            }
+            return Orientation.PLUS;
+        }
+
+        /// <summary>
+        /// Inverts the given orientation if the given invert parameter is true
+        /// <param name="orientation">Orientation invert, + will give - and - will give +</param>
+        /// <param name="invert">Whether to invert or not</param>
+        /// </summary>
+        public static Orientation Invert(this Orientation orientation, bool invert)
+        {
+            if (invert)
+            {
+                return orientation.Invert();
+            }
+            return orientation;
+        }
     }
 }
