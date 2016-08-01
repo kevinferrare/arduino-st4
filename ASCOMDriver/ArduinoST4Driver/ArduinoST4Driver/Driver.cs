@@ -70,7 +70,7 @@ namespace ASCOM.ArduinoST4
         /// <summary>
         /// Enable logging
         /// </summary>
-        internal static bool traceState = true;
+        internal static bool traceState = false;
 
         /// <summary>
         /// ASCOM Utilities object, used only to calculate dates
@@ -1085,7 +1085,7 @@ namespace ASCOM.ArduinoST4
         }
         #endregion
 
-        public void Dispose()
+        protected virtual void Dispose(bool disposing)
         {
             this.Connected = false;
             foreach (AxisController axisController in this.axisControllers)
@@ -1099,6 +1099,12 @@ namespace ASCOM.ArduinoST4
             this.traceLogger = null;
             this.utilities.Dispose();
             this.utilities = null;
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
     }
 }

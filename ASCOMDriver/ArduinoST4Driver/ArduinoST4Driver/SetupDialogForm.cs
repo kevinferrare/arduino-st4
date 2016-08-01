@@ -10,8 +10,9 @@ namespace ASCOM.ArduinoST4
         public SetupDialogForm()
         {
             InitializeComponent();
+            populateSerialComboBox();
             // Initialise current values of user settings from the ASCOM Profile 
-            this.comPortTextBox.Text = Telescope.comPort;
+            this.comPortComboBox.Text = Telescope.comPort;
             this.traceStateCheckBox.Checked = Telescope.traceState;
             this.rightAscensionPlusSideralRateTextBox.Text = Telescope.rightAscensionSideralRatePlus.ToString();
             this.rightAscensionMinusSideralRateTextBox.Text = Telescope.rightAscensionSideralRateMinus.ToString();
@@ -19,10 +20,18 @@ namespace ASCOM.ArduinoST4
             this.declinationMinusSideralRateTextBox.Text = Telescope.declinationSideralRateMinus.ToString();
         }
 
+        private void populateSerialComboBox()
+        {
+            string[] serialPorts = System.IO.Ports.SerialPort.GetPortNames();
+            foreach (string serialPort in serialPorts)
+            {
+                this.comPortComboBox.Items.Add(serialPort);
+            }
+        }
         private void cmdOK_Click(object sender, EventArgs e) // OK button event handler
         {
             // Update the state variables with results from the dialogue
-            Telescope.comPort = comPortTextBox.Text;
+            Telescope.comPort = comPortComboBox.Text;
             Telescope.traceState = traceStateCheckBox.Checked;
             Telescope.rightAscensionSideralRatePlus = Convert.ToDouble(this.rightAscensionPlusSideralRateTextBox.Text);
             Telescope.rightAscensionSideralRateMinus = Convert.ToDouble(this.rightAscensionMinusSideralRateTextBox.Text);

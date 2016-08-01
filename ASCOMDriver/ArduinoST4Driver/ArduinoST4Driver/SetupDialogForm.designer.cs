@@ -32,7 +32,7 @@ namespace ASCOM.ArduinoST4
             this.cmdCancel = new System.Windows.Forms.Button();
             this.commentLabel = new System.Windows.Forms.Label();
             this.picASCOM = new System.Windows.Forms.PictureBox();
-            this.comPortTextBox = new System.Windows.Forms.TextBox();
+            this.comPortComboBox = new System.Windows.Forms.ComboBox();
             this.comPortLabel = new System.Windows.Forms.Label();
             this.traceStateCheckBox = new System.Windows.Forms.CheckBox();
             this.rightAscensionPlusSideralRateLabel = new System.Windows.Forms.Label();
@@ -100,10 +100,10 @@ namespace ASCOM.ArduinoST4
             // 
             // comPortTextBox
             // 
-            this.comPortTextBox.Location = new System.Drawing.Point(109, 10);
-            this.comPortTextBox.Name = "comPortTextBox";
-            this.comPortTextBox.Size = new System.Drawing.Size(82, 20);
-            this.comPortTextBox.TabIndex = 4;
+            this.comPortComboBox.Location = new System.Drawing.Point(109, 10);
+            this.comPortComboBox.Name = "comPortComboBox";
+            this.comPortComboBox.Size = new System.Drawing.Size(82, 20);
+            this.comPortComboBox.TabIndex = 4;
             // 
             // comPortLabel
             // 
@@ -117,7 +117,7 @@ namespace ASCOM.ArduinoST4
             // traceStateCheckBox
             // 
             this.traceStateCheckBox.AutoSize = true;
-            this.traceStateCheckBox.Location = new System.Drawing.Point(121, 200);
+            this.traceStateCheckBox.Location = new System.Drawing.Point(12, 202);
             this.traceStateCheckBox.Name = "traceStateCheckBox";
             this.traceStateCheckBox.Size = new System.Drawing.Size(79, 17);
             this.traceStateCheckBox.TabIndex = 6;
@@ -216,7 +216,7 @@ namespace ASCOM.ArduinoST4
             // connectionGroupBox
             // 
             this.connectionGroupBox.Controls.Add(this.comPortLabel);
-            this.connectionGroupBox.Controls.Add(this.comPortTextBox);
+            this.connectionGroupBox.Controls.Add(this.comPortComboBox);
             this.connectionGroupBox.Location = new System.Drawing.Point(15, 29);
             this.connectionGroupBox.Name = "connectionGroupBox";
             this.connectionGroupBox.Size = new System.Drawing.Size(200, 36);
@@ -261,7 +261,7 @@ namespace ASCOM.ArduinoST4
         private System.Windows.Forms.Button cmdCancel;
         private System.Windows.Forms.Label commentLabel;
         private System.Windows.Forms.PictureBox picASCOM;
-        private System.Windows.Forms.TextBox comPortTextBox;
+        private System.Windows.Forms.ComboBox comPortComboBox;
         private System.Windows.Forms.Label comPortLabel;
         private System.Windows.Forms.CheckBox traceStateCheckBox;
         private System.Windows.Forms.Label rightAscensionPlusSideralRateLabel;
