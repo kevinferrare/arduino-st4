@@ -20,6 +20,9 @@ namespace ASCOM.ArduinoST4
             this.declinationMinusSideralRateTextBox.Text = Telescope.declinationSideralRateMinus.ToString();
         }
 
+        /// <summary>
+        /// Reads the available COM ports on the computer and adds them to the COM Port combobox
+        /// </summary>
         private void populateSerialComboBox()
         {
             string[] serialPorts = System.IO.Ports.SerialPort.GetPortNames();
@@ -28,6 +31,7 @@ namespace ASCOM.ArduinoST4
                 this.comPortComboBox.Items.Add(serialPort);
             }
         }
+
         private void cmdOK_Click(object sender, EventArgs e) // OK button event handler
         {
             // Update the state variables with results from the dialogue

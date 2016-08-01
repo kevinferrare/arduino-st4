@@ -65,7 +65,7 @@ namespace ASCOM.ArduinoST4
         /// <summary>
         /// COM port for arduino access
         /// </summary>
-        internal static string comPort = "COM4";
+        internal static string comPort = "";
 
         /// <summary>
         /// Enable logging
