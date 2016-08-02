@@ -96,6 +96,15 @@ namespace ASCOM.ArduinoST4
         }
 
         /// <summary>
+        /// Calculates the number (-1 / +1) by which to multiply the slew rate in order to get a slew speed
+        /// <param name="orientation">Orientation to move the axis (+ or -)</param>
+        /// </summary>
+        private double CalculateSlewSign(Orientation slewOrientation)
+        {
+            return slewOrientation == Orientation.PLUS ? 1 : -1;
+        }
+
+        /// <summary>
         /// Return an orientation from the given positive or negative slew rate.
         /// </summary>
         /// <param name="slewRate">Slew rate, eithe positive or negative</param>
@@ -172,14 +181,14 @@ namespace ASCOM.ArduinoST4
                 //Nothing to do :)
                 return;
             }
-            // Orientation changes if the axis is inverted
-            Orientation mountOrientation = CalculateMountOrientation(orientation);
-            //Tell the device to move
+            // Orientation the mount has to move changes if the axis is inverted
+            Orientation mountOrientation = this.CalculateMountOrientation(orientation);
+            // Tell the device to move
             this.deviceController.Move(this.axis, mountOrientation);
-            //Start tracking move position
-            //Slew rate has to be the actual hardware slew rate, so take in account the orientation given to the mount
-            this.axisMovementTracker.Start(this.CalculateSlewRate(mountOrientation));
-            //Respect the duration if it has been specified
+            // Start tracking move position
+            // Slew rate has to be the actual hardware slew rate, but orientation is the logical one (differs from hardware one if the axis is inverted)
+            this.axisMovementTracker.Start(this.CalculateSlewSign(orientation) * this.CalculateSlewRate(mountOrientation));
+            // Respect the duration if it has been specified
             if (moveDuration != null)
             {
                 if (async)
@@ -224,7 +233,9 @@ namespace ASCOM.ArduinoST4
         {
             this.Log("Move", "positionDifference=" + positionDifference + ", currentPosition=" + this.Position);
             Orientation orientation = this.CalculateOrientation(positionDifference);
-            double remainingTimeInSeconds = positionDifference / this.CalculateSlewRate(orientation);
+            // Slew rate is dependent of the mount hardware orientation
+            double slewRate = this.CalculateSlewRate(this.CalculateMountOrientation(orientation));
+            double remainingTimeInSeconds = Math.Abs(positionDifference / slewRate);
             //Calculates the time difference to reach the given position
             TimeSpan time = TimeSpan.FromSeconds(remainingTimeInSeconds);
             this.Move(time, orientation, true);

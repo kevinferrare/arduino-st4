@@ -129,8 +129,8 @@ namespace ASCOM.ArduinoST4
             }
             //Setup the axes
             axisControllers = new AxisController[2];
-            axisControllers[(int)Axis.RA] = new AxisController(Axis.RA, this.deviceController, -Constants.RA_PER_SECOND * compensatedRightAscensionSideralRateMinus, Constants.RA_PER_SECOND * compensatedRightAscensionSideralRatePlus, false);
-            axisControllers[(int)Axis.DEC] = new AxisController(Axis.DEC, this.deviceController, -Constants.DEGREES_PER_SECOND * declinationSideralRateMinus, Constants.DEGREES_PER_SECOND * declinationSideralRatePlus, meridianFlip);
+            axisControllers[(int)Axis.RA] = new AxisController(Axis.RA, this.deviceController, Constants.RA_PER_SECOND * compensatedRightAscensionSideralRateMinus, Constants.RA_PER_SECOND * compensatedRightAscensionSideralRatePlus, false);
+            axisControllers[(int)Axis.DEC] = new AxisController(Axis.DEC, this.deviceController, Constants.DEGREES_PER_SECOND * declinationSideralRateMinus, Constants.DEGREES_PER_SECOND * declinationSideralRatePlus, meridianFlip);
             traceLogger.LogMessage("Telescope", "Completed initialisation");
         }
 
