@@ -63,8 +63,6 @@ namespace ASCOM.ArduinoST4
         internal static double declinationSideralRateMinus = 8;
         internal static bool mountCompensatesEarthRotationInSlew = false;
 
-        internal static string hemisphere = Constants.NORTHERN_HEMISPHERE;
-
         internal static bool meridianFlip = false;
 
         /// <summary>
@@ -121,30 +119,18 @@ namespace ASCOM.ArduinoST4
 
             deviceController = new DeviceController();
 
-            //Determinate axes inversion
-            bool invertRA = (hemisphere == Constants.SOUTHERN_HEMISPHERE);
-            bool invertDEC = ((hemisphere == Constants.SOUTHERN_HEMISPHERE) ^ meridianFlip);
-
             double compensatedRightAscensionSideralRateMinus = rightAscensionSideralRateMinus;
             double compensatedRightAscensionSideralRatePlus = rightAscensionSideralRatePlus;
             if (!mountCompensatesEarthRotationInSlew)
             {
                 //Compensates in software for the earth rotation while slewing
-                if (!invertRA)
-                {
-                    compensatedRightAscensionSideralRateMinus -= 1;//Sideral Rate -1 for earth rotation
-                    compensatedRightAscensionSideralRatePlus += 1;//Sideral Rate +1 for earth rotation
-                }
-                else
-                {
-                    compensatedRightAscensionSideralRateMinus += 1;
-                    compensatedRightAscensionSideralRatePlus -= 1;
-                }
+                compensatedRightAscensionSideralRateMinus -= 1;//Sideral Rate -1 for earth rotation
+                compensatedRightAscensionSideralRatePlus += 1;//Sideral Rate +1 for earth rotation
             }
             //Setup the axes
             axisControllers = new AxisController[2];
-            axisControllers[(int)Axis.RA] = new AxisController(Axis.RA, this.deviceController, -Constants.RA_PER_SECOND * compensatedRightAscensionSideralRateMinus, Constants.RA_PER_SECOND * compensatedRightAscensionSideralRatePlus, invertRA);
-            axisControllers[(int)Axis.DEC] = new AxisController(Axis.DEC, this.deviceController, -Constants.DEGREES_PER_SECOND * declinationSideralRateMinus, Constants.DEGREES_PER_SECOND * declinationSideralRatePlus, invertDEC);
+            axisControllers[(int)Axis.RA] = new AxisController(Axis.RA, this.deviceController, -Constants.RA_PER_SECOND * compensatedRightAscensionSideralRateMinus, Constants.RA_PER_SECOND * compensatedRightAscensionSideralRatePlus, false);
+            axisControllers[(int)Axis.DEC] = new AxisController(Axis.DEC, this.deviceController, -Constants.DEGREES_PER_SECOND * declinationSideralRateMinus, Constants.DEGREES_PER_SECOND * declinationSideralRatePlus, meridianFlip);
             traceLogger.LogMessage("Telescope", "Completed initialisation");
         }
 
@@ -833,7 +819,6 @@ namespace ASCOM.ArduinoST4
                 declinationSideralRatePlus = ReadDoubleFromProfile(driverProfile, "declinationSideralRatePlus", declinationSideralRatePlus);
                 declinationSideralRateMinus = ReadDoubleFromProfile(driverProfile, "declinationSideralRateMinus", declinationSideralRateMinus);
                 mountCompensatesEarthRotationInSlew= ReadBoolFromProfile(driverProfile, "mountCompensatesEarthRotationInSlew", mountCompensatesEarthRotationInSlew);
-                hemisphere = ReadStringFromProfile(driverProfile, "hemisphere", hemisphere);
                 meridianFlip = ReadBoolFromProfile(driverProfile, "meridianFlip", meridianFlip);
             }
         }
@@ -868,7 +853,6 @@ namespace ASCOM.ArduinoST4
                 driverProfile.WriteValue(driverID, "declinationSideralRatePlus", declinationSideralRatePlus.ToString());
                 driverProfile.WriteValue(driverID, "declinationSideralRateMinus", declinationSideralRateMinus.ToString());
                 driverProfile.WriteValue(driverID, "mountCompensatesEarthRotationInSlew", mountCompensatesEarthRotationInSlew.ToString());
-                driverProfile.WriteValue(driverID, "hemisphere", hemisphere);
                 driverProfile.WriteValue(driverID, "meridianFlip", meridianFlip.ToString());
             }
         }

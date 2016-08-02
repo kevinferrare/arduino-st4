@@ -11,7 +11,6 @@ namespace ASCOM.ArduinoST4
         {
             InitializeComponent();
             populateSerialComboBox(Telescope.comPort);
-            populateHemisphereComboBox(Telescope.hemisphere);
             // Initialise current values of user settings from the ASCOM Profile 
             this.traceStateCheckBox.Checked = Telescope.traceState;
             this.rightAscensionPlusSideralRateTextBox.Text = Telescope.rightAscensionSideralRatePlus.ToString();
@@ -30,15 +29,6 @@ namespace ASCOM.ArduinoST4
             string[] serialPorts = System.IO.Ports.SerialPort.GetPortNames();
             Array.Sort(serialPorts);
             fillComboBoxFromArray(this.comPortComboBox, serialPorts, selected);
-        }
-
-        /// <summary>
-        /// Fills the hemishpere combobox with available values
-        /// </summary>
-        private void populateHemisphereComboBox(string selected)
-        {
-            string[] hemispheres = { Constants.NORTHERN_HEMISPHERE, Constants.SOUTHERN_HEMISPHERE };
-            fillComboBoxFromArray(this.hemisphereComboBox, hemispheres, selected);
         }
   
         /// <summary>
@@ -77,7 +67,6 @@ namespace ASCOM.ArduinoST4
             Telescope.declinationSideralRatePlus = Convert.ToDouble(this.declinationPlusSideralRateTextBox.Text);
             Telescope.declinationSideralRateMinus = Convert.ToDouble(this.declinationMinusSideralRateTextBox.Text);
             Telescope.mountCompensatesEarthRotationInSlew = this.mountCompensatesEarthRotationInSlewCheckBox.Checked;
-            Telescope.hemisphere = this.hemisphereComboBox.Text;
             Telescope.meridianFlip = this.meridianFlipCheckBox.Checked;
         }
 
