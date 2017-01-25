@@ -33,6 +33,8 @@ The connection between the components is as below:
 
 Be careful not to invert GND with some other pins.
 
+Please note that some mounts may have a different pinout for ST-4.
+
 My first version looked like this (quick and dirty solders, very fragile!):
 
 ![First prototype](https://raw.githubusercontent.com/kevinferrare/arduino-st4/master/Hardware/prototype_small.png)
