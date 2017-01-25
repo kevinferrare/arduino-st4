@@ -24,7 +24,7 @@ The hardware is built from off the shelf cheap components, you can buy them from
   * An arduino with an USB port (I used the Nano v3 clone since it is cheap and small).
   * An optocoupler (I used the TLP521-4).
   * A RJ12 socket.
-  * A RJ12 straight cable.
+  * A RJ12 straight cable (6P6C).
   * A bunch of 100 Ohm resistors to protect the optocoupler leds (it works without those as well)
 
 The connection between the components is as below:
@@ -36,6 +36,8 @@ Be careful not to invert GND with some other pins.
 My first version looked like this (quick and dirty solders, very fragile!):
 
 ![First prototype](https://raw.githubusercontent.com/kevinferrare/arduino-st4/master/Hardware/prototype_small.png)
+
+It is also possible to avoid buying the RJ12 cable and the connector by soldering the optocoupler directly to the mount controler.
 
 ## Flashing the arduino
 Once the hardware is built, you have to upload the code to the arduino.
