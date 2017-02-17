@@ -222,7 +222,6 @@ namespace ASCOM.ArduinoST4
         {
             get
             {
-                Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
                 string driverInfo = "Information about the driver itself. Version: " + DriverVersion;
                 traceLogger.LogMessage("DriverInfo Get", driverInfo);
                 return driverInfo;
@@ -812,28 +811,33 @@ namespace ASCOM.ArduinoST4
             using (Profile driverProfile = new Profile())
             {
                 driverProfile.DeviceType = "Telescope";
-                traceState = ReadBoolFromProfile(driverProfile, "traceState", traceState);
-                comPort = ReadStringFromProfile(driverProfile, "comPort", comPort);
-                rightAscensionSideralRatePlus = ReadDoubleFromProfile(driverProfile, "rightAscensionSideralRatePlus2", rightAscensionSideralRatePlus);
-                rightAscensionSideralRateMinus = ReadDoubleFromProfile(driverProfile, "rightAscensionSideralRateMinus2", rightAscensionSideralRateMinus);
-                declinationSideralRatePlus = ReadDoubleFromProfile(driverProfile, "declinationSideralRatePlus", declinationSideralRatePlus);
-                declinationSideralRateMinus = ReadDoubleFromProfile(driverProfile, "declinationSideralRateMinus", declinationSideralRateMinus);
-                mountCompensatesEarthRotationInSlew= ReadBoolFromProfile(driverProfile, "mountCompensatesEarthRotationInSlew", mountCompensatesEarthRotationInSlew);
-                meridianFlip = ReadBoolFromProfile(driverProfile, "meridianFlip", meridianFlip);
+                ReadFieldsFromProfile(driverProfile);
             }
         }
 
-        internal bool ReadBoolFromProfile(Profile driverProfile, String profileName, bool defaultValue)
+        static void ReadFieldsFromProfile(Profile driverProfile)
+        {
+            traceState = ReadBoolFromProfile(driverProfile, "traceState", traceState);
+            comPort = ReadStringFromProfile(driverProfile, "comPort", comPort);
+            rightAscensionSideralRatePlus = ReadDoubleFromProfile(driverProfile, "rightAscensionSideralRatePlus2", rightAscensionSideralRatePlus);
+            rightAscensionSideralRateMinus = ReadDoubleFromProfile(driverProfile, "rightAscensionSideralRateMinus2", rightAscensionSideralRateMinus);
+            declinationSideralRatePlus = ReadDoubleFromProfile(driverProfile, "declinationSideralRatePlus", declinationSideralRatePlus);
+            declinationSideralRateMinus = ReadDoubleFromProfile(driverProfile, "declinationSideralRateMinus", declinationSideralRateMinus);
+            mountCompensatesEarthRotationInSlew = ReadBoolFromProfile(driverProfile, "mountCompensatesEarthRotationInSlew", mountCompensatesEarthRotationInSlew);
+            meridianFlip = ReadBoolFromProfile(driverProfile, "meridianFlip", meridianFlip);
+        }
+
+        static internal bool ReadBoolFromProfile(Profile driverProfile, String profileName, bool defaultValue)
         {
             return Convert.ToBoolean(ReadStringFromProfile(driverProfile, profileName, Convert.ToString(defaultValue)));
         }
 
-        internal double ReadDoubleFromProfile(Profile driverProfile, String profileName, double defaultValue)
+        static internal double ReadDoubleFromProfile(Profile driverProfile, String profileName, double defaultValue)
         {
             return Convert.ToDouble(ReadStringFromProfile(driverProfile, profileName, Convert.ToString(defaultValue)));
         }
 
-        internal String ReadStringFromProfile(Profile driverProfile, String profileName, String defaultValue)
+        static internal String ReadStringFromProfile(Profile driverProfile, String profileName, String defaultValue)
         {
             return driverProfile.GetValue(driverID, profileName, string.Empty, defaultValue);
         }
