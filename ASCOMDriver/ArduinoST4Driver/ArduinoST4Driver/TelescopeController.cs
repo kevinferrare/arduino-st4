@@ -7,7 +7,7 @@ using System.Text;
 
 namespace ASCOM.ArduinoST4
 {
-    class TelescopeController
+    class TelescopeController: IDisposable
     {
         /// <summary>
         /// Logger
@@ -38,7 +38,7 @@ namespace ASCOM.ArduinoST4
             traceLogger = new TraceLogger("", "ArduinoST4 TelescopeController");
             traceLogger.Enabled = configuration.TraceState;
             traceLogger.LogMessage("Telescope", "Starting initialisation");
-            deviceController = new DeviceController();
+            deviceController = new DeviceControllerDummy();
 
             double compensatedRightAscensionSideralRateMinus = configuration.RightAscensionSideralRateMinus;
             double compensatedRightAscensionSideralRatePlus = configuration.RightAscensionSideralRatePlus;
@@ -201,17 +201,19 @@ namespace ASCOM.ArduinoST4
             {
                 double rightAscension = axisControllers[(int)Axis.RA].Position;
                 rightAscension = (rightAscension % 24 + 24) % 24;//Ensure that RA is always positive and between 0 and 24
+                traceLogger.LogMessage("RightAscension", "GET value " + rightAscension);
                 return rightAscension;
             }
         }
 
         public void SlewToCoordinates(double rightAscension, double declination)
         {
-            traceLogger.LogMessage("SlewToCoordinatesAsync", "RightAscension=" + rightAscension.ToString() + ", Declination=" + declination.ToString());
+            traceLogger.LogMessage("SlewToCoordinates", "RightAscension=" + rightAscension.ToString() + ", Declination=" + declination.ToString());
             SlewToCoordinatesAsync(rightAscension, declination);
             //Wait for both axes to finish
             this.axisControllers[(int)Axis.RA].WaitAsyncMoveEnd();
             this.axisControllers[(int)Axis.DEC].WaitAsyncMoveEnd();
+            traceLogger.LogMessage("SlewToCoordinates", "Slew complete");
         }
 
         public void SlewToCoordinatesAsync(double rightAscension, double declination)
@@ -232,28 +234,35 @@ namespace ASCOM.ArduinoST4
             double declinationDelta = declination - this.Declination;
             this.axisControllers[(int)Axis.RA].Move(rightAscensionDelta);
             this.axisControllers[(int)Axis.DEC].Move(declinationDelta);
+            traceLogger.LogMessage("SlewToCoordinatesAsync", "Slew commands sent");
         }
 
         public void SyncToCoordinates(double rightAscension, double declination)
         {
+            traceLogger.LogMessage("SyncToCoordinates", "Sync to RA = " + rightAscension + " DEC = " + declination);
             axisControllers[(int)Axis.RA].Position = rightAscension;
             axisControllers[(int)Axis.DEC].Position = declination;
+            traceLogger.LogMessage("SyncToCoordinates", "Synced");
         }
 
         public double TargetDeclination
         {
             get
             {
+                traceLogger.LogMessage("TargetDeclination GET", "Value = " + this.targetDeclination);
                 if (this.targetDeclination == null)
                 {
+                    traceLogger.LogMessage("TargetDeclination GET", "Value is null, throwing exception");
                     throw new ASCOM.ValueNotSetException("TargetDeclination");
                 }
                 return (double)this.targetDeclination;
             }
             set
             {
+                traceLogger.LogMessage("TargetDeclination SET", "Value = " + value);
                 if (value < -90 || value > 90)
                 {
+                    traceLogger.LogMessage("TargetDeclination SET", "Value is not in range -90..90, throwing exception");
                     throw new ASCOM.InvalidValueException("TargetDeclination", value.ToString(), "-90..90");
                 }
                 this.targetDeclination = value;
@@ -264,16 +273,20 @@ namespace ASCOM.ArduinoST4
         {
             get
             {
+                traceLogger.LogMessage("TargetRightAscension GET", "Value = " + this.targetRightAscension);
                 if (this.targetRightAscension == null)
                 {
+                    traceLogger.LogMessage("TargetRightAscension GET", "Value is null, throwing exception");
                     throw new ASCOM.ValueNotSetException("TargetRightAscension");
                 }
                 return (double)this.targetRightAscension;
             }
             set
             {
+                traceLogger.LogMessage("TargetRightAscension SET", "Value = " + value);
                 if (value < 0 || value > 24)
                 {
+                    traceLogger.LogMessage("TargetRightAscension SET", "Value is not in range 0..24, throwing exception");
                     throw new InvalidValueException("TargetRightAscension", value.ToString(), "0..24");
                 }
                 this.targetRightAscension = value;
@@ -284,8 +297,9 @@ namespace ASCOM.ArduinoST4
         {
             get
             {
+                traceLogger.LogMessage("Tracking GET", "Value = true");
                 //EQ5 is always tracking when motors are on
-                return !this.Moving;
+                return true;
             }
         }
 
@@ -293,7 +307,9 @@ namespace ASCOM.ArduinoST4
         {
             get
             {
-                return axisControllers[(int)Axis.RA].Moving || axisControllers[(int)Axis.DEC].Moving;
+                bool moving = axisControllers[(int)Axis.RA].Moving || axisControllers[(int)Axis.DEC].Moving;
+                traceLogger.LogMessage("Moving GET", "Value = " + moving);
+                return moving;
             }
         }
 

@@ -22,117 +22,38 @@ namespace ASCOM.ArduinoST4
     /// Hardware communication is implemented here.
     /// </summary>
     /// Author:  Kevin Ferrare
-    class DeviceController : IDisposable
+    interface DeviceController
     {
-        private TraceLogger traceLogger;
-
-        /// <summary>
-        /// Serial connection to the device
-        /// </summary>
-        private Serial serialConnection = new Serial();
-
-        /// <summary>
-        /// Whether the device is connected or not
-        /// </summary>
-        private Boolean connected;
-
-        public DeviceController()
-        {
-            traceLogger = new TraceLogger("", "ArduinoST4 DeviceController");
-            traceLogger.Enabled = true;
-            connected = false;
-        }
 
         /// <summary>
         /// Connect to the arduino with the given com port.
         /// </summary>
         /// <param name="comPort"></param>
-        public void Connect(String comPort)
-        {
-            traceLogger.LogMessage("Connected Set", "Connecting to port " + comPort);
-            serialConnection.PortName = comPort;
-            //57.6k
-            serialConnection.Speed = SerialSpeed.ps57600;
-            //No parity
-            serialConnection.Parity = SerialParity.None;
-            //Stop bit one
-            serialConnection.StopBits = SerialStopBits.One;
-            serialConnection.DataBits = 8;
-            //Timeout, initial message can take up to 5 seconds while the arduino initializes
-            serialConnection.ReceiveTimeout = 5;
-            serialConnection.Connected = true;
-
-            //The arduino will send "INITIALIZED" by itself once it is ready (can take several seconds)
-            String initialMessage = ReadResponse();
-            //Reset device and light up the LED
-            this.connected = CommandBool("CONNECT");
-            if (!this.connected)
-            {
-                //close serial connection when it failed
-                serialConnection.Connected = false;
-            }
-        }
+        void Connect(String comPort);
 
         /// <summary>
         /// Disconnect from the arduino
         /// </summary>
-        public void Disconnect()
-        {
-            //Tell bye-bye to the device
-            CommandBool("DISCONNECT");
-            this.connected = false;
-            traceLogger.LogMessage("Connected Set", "Disconnecting");
-            serialConnection.Connected = false;
-        }
+        void Disconnect();
 
         /// <summary>
         /// Return true when connected
         /// </summary>
-        public bool Connected
-        {
-            get
-            {
-                traceLogger.LogMessage("Connected Get", connected.ToString());
-                return this.connected;
-            }
-        }
+        bool Connected { get; }
 
         /// <summary>
         /// Send the given command to the device.
         /// </summary>
         /// <param name="command">Command to send</param>
         /// <returns>true if it has been understood correctly</returns>
-        public bool CommandBool(string command)
-        {
-            string ret = CommandString(command);
-            //Successful commands should return OK
-            return ret.Equals("OK");
-        }
+        bool CommandBool(string command);
 
         /// <summary>
         /// Send the given command to the device.
         /// </summary>
         /// <param name="command">Command to send</param>
         /// <returns>Response returned by the device</returns>
-        public string CommandString(string command)
-        {
-            traceLogger.LogMessage("CommandString", "Sending command " + command);
-            //All commands from and to the arduino ends with #
-            serialConnection.Transmit(command + "#");
-            return ReadResponse();
-        }
-
-        /// <summary>
-        /// Read a response from the arduino and returns it
-        /// </summary>
-        private String ReadResponse()
-        {
-            traceLogger.LogMessage("ReadResponse", "Reading response");
-            String response = serialConnection.ReceiveTerminated("#");
-            response = response.Replace("#", "").Replace("\r", "").Replace("\n", "");
-            traceLogger.LogMessage("ReadResponse", "Received response " + response);
-            return response;
-        }
+        string CommandString(string command);
 
         /// <summary>
         /// Tell the hardware to start / stop moving on the given axis.
@@ -140,32 +61,6 @@ namespace ASCOM.ArduinoST4
         /// </summary>
         /// <param name="axis">Axis to move</param>
         /// <param name="orientation">Orientation along the axis</param>
-        public void Move(Axis axis, Orientation? orientation)
-        {
-            //Do nothing if not connected
-            if (!this.Connected)
-            {
-                return;
-            }
-            String axisName = axis.ToString();
-            if (orientation == null)
-            {
-                //Stops the movement for the axis
-                this.CommandBool(axisName + "0");
-            }
-            else
-            {
-                String sign = (Orientation)orientation == Orientation.PLUS ? "+" : "-";
-                this.CommandBool(axisName + sign);
-            }
-        }
-
-        public void Dispose()
-        {
-            traceLogger.Enabled = false;
-            traceLogger.Dispose();
-            traceLogger = null;
-            serialConnection.Dispose();
-        }
+        void Move(Axis axis, Orientation? orientation);
     }
 }

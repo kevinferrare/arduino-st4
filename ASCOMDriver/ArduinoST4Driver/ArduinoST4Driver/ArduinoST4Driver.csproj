@@ -106,6 +106,8 @@
     <Compile Include="Configuration.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="DeviceController.cs" />
+    <Compile Include="DeviceControllerArduino.cs" />
+    <Compile Include="DeviceControllerDummy.cs" />
     <Compile Include="Driver.cs" />
     <Compile Include="DriverRegistrationManager.cs" />
     <Compile Include="Orientation.cs" />

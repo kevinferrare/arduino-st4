@@ -635,6 +635,7 @@ namespace ASCOM.ArduinoST4
             throw new ASCOM.ActionNotImplementedException("Action " + actionName + " is not implemented by this driver");
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1065:DoNotRaiseExceptionsInUnexpectedLocations")]
         public double Altitude
         {
             get
@@ -644,6 +645,7 @@ namespace ASCOM.ArduinoST4
             }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1065:DoNotRaiseExceptionsInUnexpectedLocations")]
         public double ApertureArea
         {
             get
@@ -653,6 +655,7 @@ namespace ASCOM.ArduinoST4
             }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1065:DoNotRaiseExceptionsInUnexpectedLocations")]
         public double ApertureDiameter
         {
             get
@@ -682,6 +685,7 @@ namespace ASCOM.ArduinoST4
             }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1065:DoNotRaiseExceptionsInUnexpectedLocations")]
         public double Azimuth
         {
             get
@@ -712,6 +716,7 @@ namespace ASCOM.ArduinoST4
             throw new ASCOM.PropertyNotImplementedException("DestinationSideOfPier", false);
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1065:DoNotRaiseExceptionsInUnexpectedLocations")]
         public bool DoesRefraction
         {
             get
@@ -732,6 +737,7 @@ namespace ASCOM.ArduinoST4
             throw new ASCOM.MethodNotImplementedException("FindHome");
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1065:DoNotRaiseExceptionsInUnexpectedLocations")]
         public double FocalLength
         {
             get
@@ -769,6 +775,7 @@ namespace ASCOM.ArduinoST4
             throw new ASCOM.MethodNotImplementedException("SetPark");
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1065:DoNotRaiseExceptionsInUnexpectedLocations")]
         public PierSide SideOfPier
         {
             get
@@ -783,6 +790,7 @@ namespace ASCOM.ArduinoST4
             }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1065:DoNotRaiseExceptionsInUnexpectedLocations")]
         public double SiteElevation
         {
             get
@@ -797,6 +805,7 @@ namespace ASCOM.ArduinoST4
             }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1065:DoNotRaiseExceptionsInUnexpectedLocations")]
         public double SiteLatitude
         {
             get
@@ -811,6 +820,7 @@ namespace ASCOM.ArduinoST4
             }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1065:DoNotRaiseExceptionsInUnexpectedLocations")]
         public double SiteLongitude
         {
             get
@@ -825,6 +835,7 @@ namespace ASCOM.ArduinoST4
             }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1065:DoNotRaiseExceptionsInUnexpectedLocations")]
         public short SlewSettleTime
         {
             get

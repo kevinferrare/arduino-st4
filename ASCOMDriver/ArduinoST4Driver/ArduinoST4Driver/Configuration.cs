@@ -6,7 +6,7 @@ using System.Text;
 
 namespace ASCOM.ArduinoST4
 {
-    public class Configuration
+    public class Configuration : IDisposable
     {
         /// <summary>
         /// Right ascension and declination speed of the device in sideral multiple (earth rotation multiple)
@@ -106,6 +106,11 @@ namespace ASCOM.ArduinoST4
         private String ReadStringFromProfile(Profile driverProfile, String profileName, String defaultValue)
         {
             return driverProfile.GetValue(driverId, profileName, string.Empty, defaultValue);
+        }
+
+        public void Dispose()
+        {
+            traceLogger.Dispose();
         }
     }
 }
