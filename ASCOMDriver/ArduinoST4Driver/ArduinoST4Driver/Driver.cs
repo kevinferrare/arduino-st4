@@ -43,37 +43,12 @@ namespace ASCOM.ArduinoST4
     [ClassInterface(ClassInterfaceType.None)]
     public class Telescope : ITelescopeV3, IDisposable
     {
-        /// <summary>
-        /// ASCOM DeviceID (COM ProgID) for this driver.
-        /// The DeviceID is used by ASCOM applications to load the driver at runtime.
-        /// </summary>
-        internal static string driverID = "ASCOM.ArduinoST4.Telescope";
-
-        /// <summary>
-        /// Driver description that displays in the ASCOM Chooser.
-        /// </summary>
-        private static string driverDescription = "ArduinoST4 telescope driver";
-
-        /// <summary>
-        /// Right ascension and declination speed of the device in sideral multiple (earth rotation multiple)
-        /// </summary>
-        internal static double rightAscensionSideralRatePlus = 8;
-        internal static double rightAscensionSideralRateMinus = 8;
-        internal static double declinationSideralRatePlus = 8;
-        internal static double declinationSideralRateMinus = 8;
-        internal static bool mountCompensatesEarthRotationInSlew = false;
-
-        internal static bool meridianFlip = false;
-
-        /// <summary>
-        /// COM port for arduino access
-        /// </summary>
-        internal static string comPort = "";
-
-        /// <summary>
-        /// Enable logging
-        /// </summary>
-        internal static bool traceState = false;
+        private static DriverRegistrationManager driverRegistrationManager;
+        public static Configuration Configuration { get; set; }
+        static Telescope(){
+            driverRegistrationManager = new DriverRegistrationManager();
+            Configuration = new Configuration(driverRegistrationManager.DriverId, false);
+        }
 
         /// <summary>
         /// ASCOM Utilities object, used only to calculate dates
@@ -85,52 +60,25 @@ namespace ASCOM.ArduinoST4
         /// </summary>
         private TraceLogger traceLogger;
 
-        /// <summary>
-        /// Handles the communication with the arduino
-        /// </summary>
-        private DeviceController deviceController;
-
-        /// <summary>
-        /// Target position
-        /// </summary>
-        private double? targetRightAscension;
-        private double? targetDeclination;
-
-        /// <summary>
-        /// Controller for each axis, talks with the device controller to start / stop movement, keeps track of the position while doing so
-        /// </summary>
-        private AxisController[] axisControllers;
+        private TelescopeController telescopeController;
 
         public Telescope()
         {
             // Read device configuration from the ASCOM Profile store
-            ReadProfile();
+            Configuration.ReadProfile();
             // Take values in account
             Init();
         }
+
         /// <summary>
-        /// Initializes the driver from the values stored in static variables
+        /// Initializes the driver from the configuration
         /// </summary>
         public void Init()
         {
             traceLogger = new TraceLogger("", "ArduinoST4");
-            traceLogger.Enabled = traceState;
+            traceLogger.Enabled = Configuration.TraceState;
             traceLogger.LogMessage("Telescope", "Starting initialisation");
-
-            deviceController = new DeviceController();
-
-            double compensatedRightAscensionSideralRateMinus = rightAscensionSideralRateMinus;
-            double compensatedRightAscensionSideralRatePlus = rightAscensionSideralRatePlus;
-            if (!mountCompensatesEarthRotationInSlew)
-            {
-                //Compensates in software for the earth rotation while slewing
-                compensatedRightAscensionSideralRateMinus -= 1;//Sideral Rate -1 for earth rotation
-                compensatedRightAscensionSideralRatePlus += 1;//Sideral Rate +1 for earth rotation
-            }
-            //Setup the axes
-            axisControllers = new AxisController[2];
-            axisControllers[(int)Axis.RA] = new AxisController(Axis.RA, this.deviceController, Constants.RA_PER_SECOND * compensatedRightAscensionSideralRateMinus, Constants.RA_PER_SECOND * compensatedRightAscensionSideralRatePlus, false);
-            axisControllers[(int)Axis.DEC] = new AxisController(Axis.DEC, this.deviceController, Constants.DEGREES_PER_SECOND * declinationSideralRateMinus, Constants.DEGREES_PER_SECOND * declinationSideralRatePlus, meridianFlip);
+            telescopeController = new TelescopeController(Configuration);
             traceLogger.LogMessage("Telescope", "Completed initialisation");
         }
 
@@ -146,7 +94,7 @@ namespace ASCOM.ArduinoST4
         public void SetupDialog()
         {
             // Only show the setup dialog if not connected
-            if (this.deviceController.Connected)
+            if (this.telescopeController.Connected)
             {
                 System.Windows.Forms.MessageBox.Show("Already connected, just press OK");
                 return;
@@ -158,7 +106,7 @@ namespace ASCOM.ArduinoST4
                 if (result == System.Windows.Forms.DialogResult.OK)
                 {
                     // Persist device configuration values to the ASCOM Profile store
-                    WriteProfile();
+                    Configuration.WriteProfile();
                     // Take in account new values
                     Init();
                 }
@@ -167,45 +115,28 @@ namespace ASCOM.ArduinoST4
 
         public void CommandBlind(string command, bool raw)
         {
-            CheckConnected("CommandBlind");
-            // Call CommandString and return as soon as it finishes
-            this.CommandString(command, raw);
+            this.telescopeController.CommandString(command, raw);
         }
 
         public bool CommandBool(string command, bool raw)
         {
-            CheckConnected("CommandBool");
-            return deviceController.CommandBool(command);
+            return telescopeController.CommandBool(command, raw);
         }
 
         public string CommandString(string command, bool raw)
         {
-            CheckConnected("CommandString");
-            return deviceController.CommandString(command);
+            return telescopeController.CommandString(command, raw);
         }
 
         public bool Connected
         {
             get
             {
-                traceLogger.LogMessage("Connected Get", this.deviceController.Connected.ToString());
-                return this.deviceController.Connected;
+                return this.telescopeController.Connected;
             }
             set
             {
-                traceLogger.LogMessage("Connected Set", value.ToString());
-                if (value == this.deviceController.Connected)
-                {
-                    return;
-                }
-                if (value)
-                {
-                    this.deviceController.Connect(comPort);
-                }
-                else
-                {
-                    this.deviceController.Disconnect();
-                }
+                this.telescopeController.Connected = value;
             }
         }
 
@@ -213,8 +144,8 @@ namespace ASCOM.ArduinoST4
         {
             get
             {
-                traceLogger.LogMessage("Description Get", driverDescription);
-                return driverDescription;
+                traceLogger.LogMessage("Description Get", driverRegistrationManager.DriverDescription);
+                return driverRegistrationManager.DriverDescription;
             }
         }
 
@@ -264,8 +195,7 @@ namespace ASCOM.ArduinoST4
         #region ITelescope Implementation
         public void AbortSlew()
         {
-            axisControllers[(int)Axis.RA].Stop();
-            axisControllers[(int)Axis.DEC].Stop();
+            this.telescopeController.AbortSlew();
         }
 
         public AlignmentModes AlignmentMode
@@ -279,7 +209,7 @@ namespace ASCOM.ArduinoST4
         public IAxisRates AxisRates(TelescopeAxes axis)
         {
             traceLogger.LogMessage("AxisRates", "Get - " + axis.ToString());
-            return new AxisRates(axis);
+            return this.telescopeController.AxisRates(axis);
         }
 
         #region Capabilities
@@ -449,7 +379,7 @@ namespace ASCOM.ArduinoST4
         {
             get
             {
-                return axisControllers[(int)Axis.DEC].Position;
+                return this.telescopeController.Declination;
             }
         }
 
@@ -467,7 +397,7 @@ namespace ASCOM.ArduinoST4
         {
             get
             {
-                return axisControllers[(int)Axis.DEC].SlewRate;
+                return this.telescopeController.GuideRateDeclination;
             }
             set
             {
@@ -480,7 +410,7 @@ namespace ASCOM.ArduinoST4
         {
             get
             {
-                return axisControllers[(int)Axis.RA].SlewRate;
+                return this.telescopeController.GuideRateRightAscension;
             }
             set
             {
@@ -493,67 +423,26 @@ namespace ASCOM.ArduinoST4
         {
             get
             {
-                return this.Moving;
+                return this.telescopeController.Moving;
             }
         }
 
         public void MoveAxis(TelescopeAxes telescopeAxis, double rate)
         {
-            traceLogger.LogMessage("MoveAxis", "TelescopeAxis - " + telescopeAxis.ToString() + "Rate - " + rate.ToString());
-            //Some checks on given values for API conformity
-            if (telescopeAxis == TelescopeAxes.axisTertiary)
-            {
-                throw new ASCOM.InvalidValueException("TelescopeAxes", telescopeAxis.ToString(), "No ternary axis on ST-4");
-            }
-            IRate axisRate = this.AxisRates(telescopeAxis)[1];
-            if (Math.Abs(rate) > axisRate.Maximum || Math.Abs(rate) < axisRate.Minimum)
-            {
-                throw new ASCOM.InvalidValueException("AxisRate", rate.ToString(), axisRate.Minimum + ".." + axisRate.Maximum);
-            }
-
-            Orientation orientation = rate > 0 ? Orientation.PLUS : Orientation.MINUS;
-            Axis axis = telescopeAxis == TelescopeAxes.axisPrimary ? Axis.RA : Axis.DEC;
-            AxisController axisPositionController = axisControllers[(int)axis];
-            if (rate == 0)
-            {
-                axisPositionController.Stop();
-            }
-            else
-            {
-                axisPositionController.Move(orientation);
-            }
+            this.telescopeController.MoveAxis(telescopeAxis, rate);
         }
 
 
         public void PulseGuide(GuideDirections direction, int duration)
         {
-            traceLogger.LogMessage("PulseGuide", "Direction - " + direction.ToString() + "Duration - " + duration.ToString());
-            //Duration in milliseconds
-            TimeSpan moveDuration = TimeSpan.FromMilliseconds(duration);
-            switch (direction)
-            {
-                case GuideDirections.guideEast:
-                    axisControllers[(int)Axis.RA].Move(moveDuration, Orientation.PLUS);
-                    break;
-                case GuideDirections.guideWest:
-                    axisControllers[(int)Axis.RA].Move(moveDuration, Orientation.MINUS);
-                    break;
-                case GuideDirections.guideNorth:
-                    axisControllers[(int)Axis.DEC].Move(moveDuration, Orientation.PLUS);
-                    break;
-                case GuideDirections.guideSouth:
-                    axisControllers[(int)Axis.DEC].Move(moveDuration, Orientation.MINUS);
-                    break;
-            }
+            this.telescopeController.PulseGuide(direction, duration);
         }
 
         public double RightAscension
         {
             get
             {
-                double rightAscension = axisControllers[(int)Axis.RA].Position;
-                rightAscension = (rightAscension % 24 + 24) % 24;//Ensure that RA is always positive and between 0 and 24
-                return rightAscension;
+                return this.telescopeController.RightAscension;
             }
         }
 
@@ -569,31 +458,12 @@ namespace ASCOM.ArduinoST4
 
         public void SlewToCoordinates(double rightAscension, double declination)
         {
-            traceLogger.LogMessage("SlewToCoordinatesAsync", "RightAscension=" + rightAscension.ToString() + ", Declination=" + declination.ToString());
-            SlewToCoordinatesAsync(rightAscension, declination);
-            //Wait for both axes to finish
-            this.axisControllers[(int)Axis.RA].WaitAsyncMoveEnd();
-            this.axisControllers[(int)Axis.DEC].WaitAsyncMoveEnd();
+            this.telescopeController.SlewToCoordinates(rightAscension, declination);
         }
 
         public void SlewToCoordinatesAsync(double rightAscension, double declination)
         {
-            traceLogger.LogMessage("SlewToCoordinatesAsync", "RightAscension=" + rightAscension.ToString() + ", Declination=" + declination.ToString() + " (current position ra=" + this.RightAscension + ", dec=" + this.Declination);
-            double rightAscensionDelta = rightAscension - this.RightAscension;
-            if (rightAscensionDelta < -12)
-            {
-                //Shortest path from 24 to 0
-                rightAscensionDelta += 24;
-            }
-            else if (rightAscensionDelta > 12)
-            {
-                //Shortest path from 0 to 24
-                rightAscensionDelta -= 24;
-            }
-            traceLogger.LogMessage("SlewToCoordinatesAsync", "RightAscension delta =" + rightAscensionDelta.ToString());
-            double declinationDelta = declination - this.Declination;
-            this.axisControllers[(int)Axis.RA].Move(rightAscensionDelta);
-            this.axisControllers[(int)Axis.DEC].Move(declinationDelta);
+            this.telescopeController.SlewToCoordinatesAsync(rightAscension, declination);
         }
 
         public void SlewToTarget()
@@ -610,15 +480,13 @@ namespace ASCOM.ArduinoST4
         {
             get
             {
-                // Slewing and pulse guiding are the same for the hardware
-                return IsPulseGuiding;
+                return this.telescopeController.Moving;
             }
         }
 
         public void SyncToCoordinates(double rightAscension, double declination)
         {
-            axisControllers[(int)Axis.RA].Position = rightAscension;
-            axisControllers[(int)Axis.DEC].Position = declination;
+            this.telescopeController.SyncToCoordinates(rightAscension, declination);
         }
 
         public void SyncToTarget()
@@ -630,19 +498,11 @@ namespace ASCOM.ArduinoST4
         {
             get
             {
-                if (this.targetDeclination == null)
-                {
-                    throw new ASCOM.ValueNotSetException("TargetDeclination");
-                }
-                return (double)this.targetDeclination;
+                return this.telescopeController.TargetDeclination;
             }
             set
             {
-                if (value < -90 || value > 90)
-                {
-                    throw new ASCOM.InvalidValueException("TargetDeclination", value.ToString(), "-90..90");
-                }
-                this.targetDeclination = value;
+                this.TargetDeclination = value;
             }
         }
 
@@ -650,19 +510,11 @@ namespace ASCOM.ArduinoST4
         {
             get
             {
-                if (this.targetRightAscension == null)
-                {
-                    throw new ASCOM.ValueNotSetException("TargetRightAscension");
-                }
-                return (double)this.targetRightAscension;
+                return this.telescopeController.TargetRightAscension;
             }
             set
             {
-                if (value < 0 || value > 24)
-                {
-                    throw new InvalidValueException("TargetRightAscension", value.ToString(), "0..24");
-                }
-                this.targetRightAscension = value;
+                this.telescopeController.TargetRightAscension = value;
             }
         }
 
@@ -670,8 +522,7 @@ namespace ASCOM.ArduinoST4
         {
             get
             {
-                //EQ5 is always tracking when motors are on
-                bool tracking = !this.Moving;
+                bool tracking = this.telescopeController.Tracking;
                 traceLogger.LogMessage("Tracking Get", tracking.ToString());
                 return tracking;
             }
@@ -719,30 +570,6 @@ namespace ASCOM.ArduinoST4
 
         #region ASCOM Registration
 
-        // Register or unregister driver for ASCOM. This is harmless if already
-        // registered or unregistered. 
-        //
-        /// <summary>
-        /// Register or unregister the driver with the ASCOM Platform.
-        /// This is harmless if the driver is already registered/unregistered.
-        /// </summary>
-        /// <param name="register">If <c>true</c>, registers the driver, otherwise unregisters it.</param>
-        private static void RegUnregASCOM(bool register)
-        {
-            using (var profile = new ASCOM.Utilities.Profile())
-            {
-                profile.DeviceType = "Telescope";
-                if (register)
-                {
-                    profile.Register(driverID, driverDescription);
-                }
-                else
-                {
-                    profile.Unregister(driverID);
-                }
-            }
-        }
-
         /// <summary>
         /// This function registers the driver with the ASCOM Chooser and
         /// is called automatically whenever this class is registered for COM Interop.
@@ -763,7 +590,7 @@ namespace ASCOM.ArduinoST4
         [ComRegisterFunction]
         public static void RegisterASCOM(Type t)
         {
-            RegUnregASCOM(true);
+            driverRegistrationManager.RegUnregASCOM(true);
         }
 
         /// <summary>
@@ -786,88 +613,11 @@ namespace ASCOM.ArduinoST4
         [ComUnregisterFunction]
         public static void UnregisterASCOM(Type t)
         {
-            RegUnregASCOM(false);
+            driverRegistrationManager.RegUnregASCOM(false);
         }
 
         #endregion
 
-        /// <summary>
-        /// Throws an exception if not connected to the hardware
-        /// </summary>
-        /// <param name="message"></param>
-        private void CheckConnected(string message)
-        {
-            if (!this.deviceController.Connected)
-            {
-                throw new ASCOM.NotConnectedException(message);
-            }
-        }
-
-        /// <summary>
-        /// Read the device configuration from the ASCOM Profile store
-        /// </summary>
-        internal void ReadProfile()
-        {
-            using (Profile driverProfile = new Profile())
-            {
-                driverProfile.DeviceType = "Telescope";
-                ReadFieldsFromProfile(driverProfile);
-            }
-        }
-
-        static void ReadFieldsFromProfile(Profile driverProfile)
-        {
-            traceState = ReadBoolFromProfile(driverProfile, "traceState", traceState);
-            comPort = ReadStringFromProfile(driverProfile, "comPort", comPort);
-            rightAscensionSideralRatePlus = ReadDoubleFromProfile(driverProfile, "rightAscensionSideralRatePlus2", rightAscensionSideralRatePlus);
-            rightAscensionSideralRateMinus = ReadDoubleFromProfile(driverProfile, "rightAscensionSideralRateMinus2", rightAscensionSideralRateMinus);
-            declinationSideralRatePlus = ReadDoubleFromProfile(driverProfile, "declinationSideralRatePlus", declinationSideralRatePlus);
-            declinationSideralRateMinus = ReadDoubleFromProfile(driverProfile, "declinationSideralRateMinus", declinationSideralRateMinus);
-            mountCompensatesEarthRotationInSlew = ReadBoolFromProfile(driverProfile, "mountCompensatesEarthRotationInSlew", mountCompensatesEarthRotationInSlew);
-            meridianFlip = ReadBoolFromProfile(driverProfile, "meridianFlip", meridianFlip);
-        }
-
-        static internal bool ReadBoolFromProfile(Profile driverProfile, String profileName, bool defaultValue)
-        {
-            return Convert.ToBoolean(ReadStringFromProfile(driverProfile, profileName, Convert.ToString(defaultValue)));
-        }
-
-        static internal double ReadDoubleFromProfile(Profile driverProfile, String profileName, double defaultValue)
-        {
-            return Convert.ToDouble(ReadStringFromProfile(driverProfile, profileName, Convert.ToString(defaultValue)));
-        }
-
-        static internal String ReadStringFromProfile(Profile driverProfile, String profileName, String defaultValue)
-        {
-            return driverProfile.GetValue(driverID, profileName, string.Empty, defaultValue);
-        }
-
-        /// <summary>
-        /// Write the device configuration to the  ASCOM  Profile store
-        /// </summary>
-        internal void WriteProfile()
-        {
-            using (Profile driverProfile = new Profile())
-            {
-                driverProfile.DeviceType = "Telescope";
-                driverProfile.WriteValue(driverID, "traceState", traceState.ToString());
-                driverProfile.WriteValue(driverID, "comPort", comPort.ToString());
-                driverProfile.WriteValue(driverID, "rightAscensionSideralRatePlus2", rightAscensionSideralRatePlus.ToString());
-                driverProfile.WriteValue(driverID, "rightAscensionSideralRateMinus2", rightAscensionSideralRateMinus.ToString());
-                driverProfile.WriteValue(driverID, "declinationSideralRatePlus", declinationSideralRatePlus.ToString());
-                driverProfile.WriteValue(driverID, "declinationSideralRateMinus", declinationSideralRateMinus.ToString());
-                driverProfile.WriteValue(driverID, "mountCompensatesEarthRotationInSlew", mountCompensatesEarthRotationInSlew.ToString());
-                driverProfile.WriteValue(driverID, "meridianFlip", meridianFlip.ToString());
-            }
-        }
-
-        internal Boolean Moving
-        {
-            get
-            {
-                return axisControllers[(int)Axis.RA].Moving || axisControllers[(int)Axis.DEC].Moving;
-            }
-        }
         #endregion
 
         #region unimplementable
@@ -1116,12 +866,7 @@ namespace ASCOM.ArduinoST4
 
         protected virtual void Dispose(bool disposing)
         {
-            this.Connected = false;
-            foreach (AxisController axisController in this.axisControllers)
-            {
-                axisController.Dispose();
-            }
-            this.deviceController.Dispose();
+            this.telescopeController.Dispose();
             // Clean up the tracelogger and util objects
             this.traceLogger.Enabled = false;
             this.traceLogger.Dispose();

@@ -251,7 +251,7 @@ namespace ASCOM.ArduinoST4
             // Slew rate is dependent of the mount hardware orientation
             double slewRate = this.CalculateSlewRate(this.CalculateMountOrientation(orientation));
             double remainingTimeInSeconds = Math.Abs(positionDifference / slewRate);
-            //Calculates the time difference to reach the given position
+            // Calculates the time difference to reach the given position
             TimeSpan time = TimeSpan.FromSeconds(remainingTimeInSeconds);
             this.Move(time, orientation, true);
         }

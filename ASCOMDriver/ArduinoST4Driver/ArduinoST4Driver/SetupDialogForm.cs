@@ -10,15 +10,16 @@ namespace ASCOM.ArduinoST4
         public SetupDialogForm()
         {
             InitializeComponent();
-            populateSerialComboBox(Telescope.comPort);
+            Configuration configuration = Telescope.Configuration;
+            populateSerialComboBox(configuration.ComPort);
             // Initialise current values of user settings from the ASCOM Profile 
-            this.traceStateCheckBox.Checked = Telescope.traceState;
-            this.rightAscensionPlusSideralRateTextBox.Text = Telescope.rightAscensionSideralRatePlus.ToString();
-            this.rightAscensionMinusSideralRateTextBox.Text = Telescope.rightAscensionSideralRateMinus.ToString();
-            this.declinationPlusSideralRateTextBox.Text = Telescope.declinationSideralRatePlus.ToString();
-            this.declinationMinusSideralRateTextBox.Text = Telescope.declinationSideralRateMinus.ToString();
-            this.mountCompensatesEarthRotationInSlewCheckBox.Checked = Telescope.mountCompensatesEarthRotationInSlew;
-            this.meridianFlipCheckBox.Checked = Telescope.meridianFlip;
+            this.traceStateCheckBox.Checked = configuration.TraceState;
+            this.rightAscensionPlusSideralRateTextBox.Text = configuration.RightAscensionSideralRatePlus.ToString();
+            this.rightAscensionMinusSideralRateTextBox.Text = configuration.RightAscensionSideralRateMinus.ToString();
+            this.declinationPlusSideralRateTextBox.Text = configuration.DeclinationSideralRatePlus.ToString();
+            this.declinationMinusSideralRateTextBox.Text = configuration.DeclinationSideralRateMinus.ToString();
+            this.mountCompensatesEarthRotationInSlewCheckBox.Checked = configuration.MountCompensatesEarthRotationInSlew;
+            this.meridianFlipCheckBox.Checked = configuration.MeridianFlip;
         }
 
         /// <summary>
@@ -60,14 +61,15 @@ namespace ASCOM.ArduinoST4
         private void cmdOK_Click(object sender, EventArgs e) // OK button event handler
         {
             // Update the state variables with results from the dialogue
-            Telescope.comPort = comPortComboBox.Text;
-            Telescope.traceState = traceStateCheckBox.Checked;
-            Telescope.rightAscensionSideralRatePlus = Convert.ToDouble(this.rightAscensionPlusSideralRateTextBox.Text);
-            Telescope.rightAscensionSideralRateMinus = Convert.ToDouble(this.rightAscensionMinusSideralRateTextBox.Text);
-            Telescope.declinationSideralRatePlus = Convert.ToDouble(this.declinationPlusSideralRateTextBox.Text);
-            Telescope.declinationSideralRateMinus = Convert.ToDouble(this.declinationMinusSideralRateTextBox.Text);
-            Telescope.mountCompensatesEarthRotationInSlew = this.mountCompensatesEarthRotationInSlewCheckBox.Checked;
-            Telescope.meridianFlip = this.meridianFlipCheckBox.Checked;
+            Configuration configuration = Telescope.Configuration;
+            configuration.ComPort = comPortComboBox.Text;
+            configuration.TraceState = traceStateCheckBox.Checked;
+            configuration.RightAscensionSideralRatePlus = Convert.ToDouble(this.rightAscensionPlusSideralRateTextBox.Text);
+            configuration.RightAscensionSideralRateMinus = Convert.ToDouble(this.rightAscensionMinusSideralRateTextBox.Text);
+            configuration.DeclinationSideralRatePlus = Convert.ToDouble(this.declinationPlusSideralRateTextBox.Text);
+            configuration.DeclinationSideralRateMinus = Convert.ToDouble(this.declinationMinusSideralRateTextBox.Text);
+            configuration.MountCompensatesEarthRotationInSlew = this.mountCompensatesEarthRotationInSlewCheckBox.Checked;
+            configuration.MeridianFlip = this.meridianFlipCheckBox.Checked;
         }
 
         private void cmdCancel_Click(object sender, EventArgs e) // Cancel button event handler

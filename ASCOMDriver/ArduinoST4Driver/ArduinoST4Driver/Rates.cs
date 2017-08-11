@@ -47,7 +47,7 @@ namespace ASCOM.ArduinoST4
 
         public void Dispose()
         {
-            throw new System.NotImplementedException();
+            throw new ASCOM.MethodNotImplementedException("Dispose");
         }
 
         public double Maximum
@@ -112,7 +112,7 @@ namespace ASCOM.ArduinoST4
 
         public void Dispose()
         {
-            throw new System.NotImplementedException();
+            throw new ASCOM.MethodNotImplementedException("Dispose");
         }
 
         public IEnumerator GetEnumerator()
@@ -177,7 +177,7 @@ namespace ASCOM.ArduinoST4
 
         public void Dispose()
         {
-            throw new System.NotImplementedException();
+            throw new ASCOM.MethodNotImplementedException("Dispose");
         }
 
         public DriveRates this[int index]
