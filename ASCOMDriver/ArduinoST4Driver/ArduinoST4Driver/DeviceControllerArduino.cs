@@ -1,6 +1,4 @@
-﻿
-
-// This file is part of Arduino ST4.
+﻿// This file is part of Arduino ST4.
 //
 // Arduino ST4 is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -24,7 +22,7 @@ namespace ASCOM.ArduinoST4
     /// Hardware communication is implemented here.
     /// </summary>
     /// Author:  Kevin Ferrare
-    class DeviceControllerArduino : DeviceController, IDisposable
+    class DeviceControllerArduino : IDeviceController, IDisposable
     {
         private TraceLogger traceLogger;
 
@@ -40,8 +38,7 @@ namespace ASCOM.ArduinoST4
 
         public DeviceControllerArduino()
         {
-            traceLogger = new TraceLogger("", "ArduinoST4 DeviceController");
-            traceLogger.Enabled = true;
+            traceLogger = Configuration.Instance.CreateTraceLogger("", "Arduino DeviceController");
             connected = false;
         }
 
@@ -149,6 +146,7 @@ namespace ASCOM.ArduinoST4
             {
                 return;
             }
+            traceLogger.LogMessage("Move", "Axis " + axis + " Orientation " + orientation);
             String axisName = axis.ToString();
             if (orientation == null)
             {

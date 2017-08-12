@@ -1,13 +1,29 @@
-﻿using ASCOM.Utilities;
+﻿// This file is part of Arduino ST4.
+//
+// Arduino ST4 is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Arduino ST4 is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with Arduino ST4.  If not, see <http://www.gnu.org/licenses/>.
+
+using ASCOM.Utilities;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace ASCOM.ArduinoST4
 {
     public class Configuration : IDisposable
     {
+        /// <summary>
+        /// Global instance of the configuration, accessible by all
+        /// </summary>
+        public static Configuration Instance{ get;set; }
         /// <summary>
         /// Right ascension and declination speed of the device in sideral multiple (earth rotation multiple)
         /// </summary>
@@ -26,6 +42,12 @@ namespace ASCOM.ArduinoST4
         /// Enable logging
         /// </summary>
         public bool TraceState { get; set; }
+
+        /// <summary>
+        /// Device type
+        /// </summary>
+        public string Device { get; set; }
+
         /// <summary>
         /// Logger
         /// </summary>
@@ -35,17 +57,24 @@ namespace ASCOM.ArduinoST4
 
         public Configuration(String driverId, Boolean traceState)
         {
-            RightAscensionSideralRatePlus = 8;
-            RightAscensionSideralRateMinus = 8;
-            DeclinationSideralRatePlus = 8;
-            DeclinationSideralRateMinus = 8;
-            MountCompensatesEarthRotationInSlew = false;
-            MeridianFlip = false;
-            ComPort = "";
-            TraceState = traceState;
+            this.RightAscensionSideralRatePlus = 8;
+            this.RightAscensionSideralRateMinus = 8;
+            this.DeclinationSideralRatePlus = 8;
+            this.DeclinationSideralRateMinus = 8;
+            this.MountCompensatesEarthRotationInSlew = false;
+            this.MeridianFlip = false;
+            this.ComPort = "";
+            this.TraceState = traceState;
             this.driverId = driverId;
-            traceLogger = new TraceLogger("", "ArduinoST4 Configuration");
-            traceLogger.Enabled = traceState;
+            this.Device = DeviceType.ARDUINO.ToString();
+            this.traceLogger = CreateTraceLogger("", "ArduinoST4 Configuration");
+        }
+
+        public TraceLogger CreateTraceLogger(String logFileName, String logFileType)
+        {
+            TraceLogger res = new TraceLogger(logFileName, logFileType);
+            res.Enabled = TraceState;
+            return res;
         }
 
         /// <summary>
@@ -58,6 +87,7 @@ namespace ASCOM.ArduinoST4
                 driverProfile.DeviceType = "Telescope";
                 driverProfile.WriteValue(driverId, "traceState", TraceState.ToString());
                 driverProfile.WriteValue(driverId, "comPort", ComPort.ToString());
+                driverProfile.WriteValue(driverId, "deviceType", Device.ToString());
                 driverProfile.WriteValue(driverId, "rightAscensionSideralRatePlus2", RightAscensionSideralRatePlus.ToString());
                 driverProfile.WriteValue(driverId, "rightAscensionSideralRateMinus2", RightAscensionSideralRateMinus.ToString());
                 driverProfile.WriteValue(driverId, "declinationSideralRatePlus", DeclinationSideralRatePlus.ToString());
@@ -77,6 +107,8 @@ namespace ASCOM.ArduinoST4
             {
                 driverProfile.DeviceType = "Telescope";
                 ReadFieldsFromProfile(driverProfile);
+                // Setup logger accordingly
+                traceLogger.Enabled = TraceState;
             }
             traceLogger.LogMessage("ReadProfile", "Read profile");
         }
@@ -85,6 +117,7 @@ namespace ASCOM.ArduinoST4
         {
             TraceState = ReadBoolFromProfile(driverProfile, "traceState", TraceState);
             ComPort = ReadStringFromProfile(driverProfile, "comPort", ComPort);
+            Device = ReadStringFromProfile(driverProfile, "deviceType", Device);
             RightAscensionSideralRatePlus = ReadDoubleFromProfile(driverProfile, "rightAscensionSideralRatePlus2", RightAscensionSideralRatePlus);
             RightAscensionSideralRateMinus = ReadDoubleFromProfile(driverProfile, "rightAscensionSideralRateMinus2", RightAscensionSideralRateMinus);
             DeclinationSideralRatePlus = ReadDoubleFromProfile(driverProfile, "declinationSideralRatePlus", DeclinationSideralRatePlus);
@@ -108,9 +141,15 @@ namespace ASCOM.ArduinoST4
             return driverProfile.GetValue(driverId, profileName, string.Empty, defaultValue);
         }
 
-        public void Dispose()
+        protected virtual void Dispose(bool disposing)
         {
             traceLogger.Dispose();
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
     }
 }

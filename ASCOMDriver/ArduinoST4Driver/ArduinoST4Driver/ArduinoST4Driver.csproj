@@ -103,12 +103,14 @@
     <Compile Include="AxisController.cs" />
     <Compile Include="Axis.cs" />
     <Compile Include="AxisMovementTracker.cs" />
+    <Compile Include="DeviceControllerFactory.cs" />
+    <Compile Include="TelescopeCommonAPI.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="Constants.cs" />
-    <Compile Include="DeviceController.cs" />
+    <Compile Include="IDeviceController.cs" />
     <Compile Include="DeviceControllerArduino.cs" />
     <Compile Include="DeviceControllerDummy.cs" />
-    <Compile Include="Driver.cs" />
+    <Compile Include="Telescope.cs" />
     <Compile Include="DriverRegistrationManager.cs" />
     <Compile Include="Orientation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -129,7 +131,7 @@
     <Compile Include="SetupDialogForm.designer.cs">
       <DependentUpon>SetupDialogForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="TelescopeController.cs" />
+    <Compile Include="TelescopeUnimplementedAPI.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">

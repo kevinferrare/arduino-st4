@@ -13,6 +13,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with Arduino ST4.  If not, see <http://www.gnu.org/licenses/>.
 
+using ASCOM.Utilities;
 using System;
 
 namespace ASCOM.ArduinoST4
@@ -21,20 +22,46 @@ namespace ASCOM.ArduinoST4
     /// Dummy device controller for testing without the hardware connected
     /// </summary>
     /// Author:  Kevin Ferrare
-    class DeviceControllerDummy : DeviceController
+    class DeviceControllerDummy : IDeviceController
     {
+        private TraceLogger traceLogger;
+
         private bool connected;
 
-        public void Connect(String comPort) { connected = true; }
+        public DeviceControllerDummy()
+        {
+            traceLogger = Configuration.Instance.CreateTraceLogger("", "Dummy DeviceController");
+            connected = false;
+        }
+        public void Connect(String comPort) {
+            traceLogger.LogMessage("Connected Set", "Connecting to port " + comPort);
+            connected = true;
+        }
 
-        public void Disconnect() { connected = false; }
+        public void Disconnect() {
+            connected = false;
+            traceLogger.LogMessage("Connected Set", "Disconnecting");
+        }
 
-        public bool Connected { get { return connected; } }
+        public bool Connected {
+            get {
+                traceLogger.LogMessage("Connected Get", connected.ToString());
+                return connected;
+            }
+        }
 
-        public bool CommandBool(string command) { return true; }
+        public bool CommandBool(string command) {
+            traceLogger.LogMessage("CommandBool", "Sending command " + command);
+            return true;
+        }
 
-        public string CommandString(string command) { return ""; }
+        public string CommandString(string command) {
+            traceLogger.LogMessage("CommandString", "Sending command " + command);
+            return "";
+        }
 
-        public void Move(Axis axis, Orientation? orientation) { }
+        public void Move(Axis axis, Orientation? orientation) {
+            traceLogger.LogMessage("Move", "Axis " + axis + " Orientation " + orientation);
+        }
     }
 }

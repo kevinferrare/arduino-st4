@@ -10,8 +10,9 @@ namespace ASCOM.ArduinoST4
         public SetupDialogForm()
         {
             InitializeComponent();
-            Configuration configuration = Telescope.Configuration;
-            populateSerialComboBox(configuration.ComPort);
+            Configuration configuration = Configuration.Instance;
+            PopulateDeviceComboBox(configuration.Device);
+            PopulateSerialComboBox(configuration.ComPort);
             // Initialise current values of user settings from the ASCOM Profile 
             this.traceStateCheckBox.Checked = configuration.TraceState;
             this.rightAscensionPlusSideralRateTextBox.Text = configuration.RightAscensionSideralRatePlus.ToString();
@@ -22,20 +23,25 @@ namespace ASCOM.ArduinoST4
             this.meridianFlipCheckBox.Checked = configuration.MeridianFlip;
         }
 
+        private void PopulateDeviceComboBox(string selected)
+        {
+            string[] devices = { DeviceType.ARDUINO.ToString(), DeviceType.DUMMY.ToString() };
+            FillComboBoxFromArray(this.deviceComboBox, devices, selected);
+        }
         /// <summary>
         /// Reads the available COM ports on the computer and adds them to the COM Port combobox
         /// </summary>
-        private void populateSerialComboBox(string selected)
+        private void PopulateSerialComboBox(string selected)
         {
             string[] serialPorts = System.IO.Ports.SerialPort.GetPortNames();
             Array.Sort(serialPorts);
-            fillComboBoxFromArray(this.comPortComboBox, serialPorts, selected);
+            FillComboBoxFromArray(this.comPortComboBox, serialPorts, selected);
         }
   
         /// <summary>
         /// Fills a combobox with the given string values
         /// </summary>
-        private void fillComboBoxFromArray(ComboBox combobox, string[] values, string selected)
+        private void FillComboBoxFromArray(ComboBox combobox, string[] values, string selected)
         {
             combobox.Items.Clear();
             if (values.Length == 0)
@@ -58,11 +64,12 @@ namespace ASCOM.ArduinoST4
             }
         }
 
-        private void cmdOK_Click(object sender, EventArgs e) // OK button event handler
+        private void CmdOK_Click(object sender, EventArgs e) // OK button event handler
         {
             // Update the state variables with results from the dialogue
-            Configuration configuration = Telescope.Configuration;
+            Configuration configuration = Configuration.Instance;
             configuration.ComPort = comPortComboBox.Text;
+            configuration.Device = deviceComboBox.Text;
             configuration.TraceState = traceStateCheckBox.Checked;
             configuration.RightAscensionSideralRatePlus = Convert.ToDouble(this.rightAscensionPlusSideralRateTextBox.Text);
             configuration.RightAscensionSideralRateMinus = Convert.ToDouble(this.rightAscensionMinusSideralRateTextBox.Text);
@@ -72,7 +79,7 @@ namespace ASCOM.ArduinoST4
             configuration.MeridianFlip = this.meridianFlipCheckBox.Checked;
         }
 
-        private void cmdCancel_Click(object sender, EventArgs e) // Cancel button event handler
+        private void CmdCancel_Click(object sender, EventArgs e) // Cancel button event handler
         {
             Close();
         }

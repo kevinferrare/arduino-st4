@@ -44,9 +44,11 @@ namespace ASCOM.ArduinoST4
             this.declinationMinusSideralRateTextBox = new System.Windows.Forms.TextBox();
             this.axisSideralRatesGroupBox = new System.Windows.Forms.GroupBox();
             this.axisSideralRatesPanel = new System.Windows.Forms.Panel();
+            this.meridianFlipCheckBox = new System.Windows.Forms.CheckBox();
             this.mountCompensatesEarthRotationInSlewCheckBox = new System.Windows.Forms.CheckBox();
             this.connectionGroupBox = new System.Windows.Forms.GroupBox();
-            this.meridianFlipCheckBox = new System.Windows.Forms.CheckBox();
+            this.deviceLabel = new System.Windows.Forms.Label();
+            this.deviceComboBox = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.picASCOM)).BeginInit();
             this.axisSideralRatesGroupBox.SuspendLayout();
             this.axisSideralRatesPanel.SuspendLayout();
@@ -57,25 +59,25 @@ namespace ASCOM.ArduinoST4
             // 
             this.cmdOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.cmdOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.cmdOK.Location = new System.Drawing.Point(281, 197);
+            this.cmdOK.Location = new System.Drawing.Point(281, 224);
             this.cmdOK.Name = "cmdOK";
             this.cmdOK.Size = new System.Drawing.Size(59, 24);
             this.cmdOK.TabIndex = 0;
             this.cmdOK.Text = "OK";
             this.cmdOK.UseVisualStyleBackColor = true;
-            this.cmdOK.Click += new System.EventHandler(this.cmdOK_Click);
+            this.cmdOK.Click += new System.EventHandler(this.CmdOK_Click);
             // 
             // cmdCancel
             // 
             this.cmdCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.cmdCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cmdCancel.Location = new System.Drawing.Point(281, 227);
+            this.cmdCancel.Location = new System.Drawing.Point(281, 254);
             this.cmdCancel.Name = "cmdCancel";
             this.cmdCancel.Size = new System.Drawing.Size(59, 25);
             this.cmdCancel.TabIndex = 1;
             this.cmdCancel.Text = "Cancel";
             this.cmdCancel.UseVisualStyleBackColor = true;
-            this.cmdCancel.Click += new System.EventHandler(this.cmdCancel_Click);
+            this.cmdCancel.Click += new System.EventHandler(this.CmdCancel_Click);
             // 
             // picASCOM
             // 
@@ -110,7 +112,7 @@ namespace ASCOM.ArduinoST4
             // traceStateCheckBox
             // 
             this.traceStateCheckBox.AutoSize = true;
-            this.traceStateCheckBox.Location = new System.Drawing.Point(12, 236);
+            this.traceStateCheckBox.Location = new System.Drawing.Point(12, 266);
             this.traceStateCheckBox.Name = "traceStateCheckBox";
             this.traceStateCheckBox.Size = new System.Drawing.Size(79, 17);
             this.traceStateCheckBox.TabIndex = 6;
@@ -184,7 +186,7 @@ namespace ASCOM.ArduinoST4
             // axisSideralRatesGroupBox
             // 
             this.axisSideralRatesGroupBox.Controls.Add(this.axisSideralRatesPanel);
-            this.axisSideralRatesGroupBox.Location = new System.Drawing.Point(12, 51);
+            this.axisSideralRatesGroupBox.Location = new System.Drawing.Point(12, 81);
             this.axisSideralRatesGroupBox.Name = "axisSideralRatesGroupBox";
             this.axisSideralRatesGroupBox.Size = new System.Drawing.Size(255, 179);
             this.axisSideralRatesGroupBox.TabIndex = 15;
@@ -208,6 +210,16 @@ namespace ASCOM.ArduinoST4
             this.axisSideralRatesPanel.Size = new System.Drawing.Size(243, 160);
             this.axisSideralRatesPanel.TabIndex = 16;
             // 
+            // meridianFlipCheckBox
+            // 
+            this.meridianFlipCheckBox.AutoSize = true;
+            this.meridianFlipCheckBox.Location = new System.Drawing.Point(9, 133);
+            this.meridianFlipCheckBox.Name = "meridianFlipCheckBox";
+            this.meridianFlipCheckBox.Size = new System.Drawing.Size(82, 17);
+            this.meridianFlipCheckBox.TabIndex = 18;
+            this.meridianFlipCheckBox.Text = "Meridian flip";
+            this.meridianFlipCheckBox.UseVisualStyleBackColor = true;
+            // 
             // mountCompensatesEarthRotationInSlewCheckBox
             // 
             this.mountCompensatesEarthRotationInSlewCheckBox.AutoSize = true;
@@ -220,30 +232,38 @@ namespace ASCOM.ArduinoST4
             // 
             // connectionGroupBox
             // 
+            this.connectionGroupBox.Controls.Add(this.deviceLabel);
             this.connectionGroupBox.Controls.Add(this.comPortLabel);
+            this.connectionGroupBox.Controls.Add(this.deviceComboBox);
             this.connectionGroupBox.Controls.Add(this.comPortComboBox);
             this.connectionGroupBox.Location = new System.Drawing.Point(12, 9);
             this.connectionGroupBox.Name = "connectionGroupBox";
-            this.connectionGroupBox.Size = new System.Drawing.Size(255, 36);
+            this.connectionGroupBox.Size = new System.Drawing.Size(255, 66);
             this.connectionGroupBox.TabIndex = 16;
             this.connectionGroupBox.TabStop = false;
             this.connectionGroupBox.Text = "Connection";
             // 
-            // meridianFlipCheckBox
+            // deviceLabel
             // 
-            this.meridianFlipCheckBox.AutoSize = true;
-            this.meridianFlipCheckBox.Location = new System.Drawing.Point(9, 133);
-            this.meridianFlipCheckBox.Name = "meridianFlipCheckBox";
-            this.meridianFlipCheckBox.Size = new System.Drawing.Size(82, 17);
-            this.meridianFlipCheckBox.TabIndex = 18;
-            this.meridianFlipCheckBox.Text = "Meridian flip";
-            this.meridianFlipCheckBox.UseVisualStyleBackColor = true;
+            this.deviceLabel.AutoSize = true;
+            this.deviceLabel.Location = new System.Drawing.Point(12, 38);
+            this.deviceLabel.Name = "deviceLabel";
+            this.deviceLabel.Size = new System.Drawing.Size(41, 13);
+            this.deviceLabel.TabIndex = 6;
+            this.deviceLabel.Text = "Device";
+            // 
+            // deviceComboBox
+            // 
+            this.deviceComboBox.Location = new System.Drawing.Point(120, 35);
+            this.deviceComboBox.Name = "deviceComboBox";
+            this.deviceComboBox.Size = new System.Drawing.Size(129, 21);
+            this.deviceComboBox.TabIndex = 6;
             // 
             // SetupDialogForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(350, 260);
+            this.ClientSize = new System.Drawing.Size(350, 287);
             this.Controls.Add(this.connectionGroupBox);
             this.Controls.Add(this.axisSideralRatesGroupBox);
             this.Controls.Add(this.traceStateCheckBox);
@@ -289,5 +309,7 @@ namespace ASCOM.ArduinoST4
         private System.Windows.Forms.GroupBox connectionGroupBox;
         private System.Windows.Forms.CheckBox meridianFlipCheckBox;
         private System.Windows.Forms.CheckBox mountCompensatesEarthRotationInSlewCheckBox;
+        private System.Windows.Forms.ComboBox deviceComboBox;
+        private System.Windows.Forms.Label deviceLabel;
     }
 }

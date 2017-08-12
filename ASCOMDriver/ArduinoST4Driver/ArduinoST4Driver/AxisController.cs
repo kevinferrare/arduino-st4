@@ -45,7 +45,7 @@ namespace ASCOM.ArduinoST4
         /// <summary>
         /// Actual hardware controller
         /// </summary>
-        private readonly DeviceController deviceController;
+        private readonly IDeviceController deviceController;
 
         /// <summary>
         /// Thread that will wait for axis to finish slewing asynchronously
@@ -76,10 +76,9 @@ namespace ASCOM.ArduinoST4
         /// <param name="minusSlewRate">Slew rate to use when moving in the MINUS orientation</param>
         /// <param name="plusSlewRate">Slew rate to use when moving in the PLUS orientation</param>
         /// <param name="inverted">Whether to invert the orientation of commands to give to the mount</param>
-        public AxisController(Axis axis, DeviceController deviceController, double minusSlewRate, double plusSlewRate, bool invertedHardware)
+        public AxisController(Axis axis, IDeviceController deviceController, double minusSlewRate, double plusSlewRate, bool invertedHardware)
         {
-            this.traceLogger = new TraceLogger("", "ArduinoST4 AxisPositionController " + axis.ToString());
-            this.traceLogger.Enabled = true;
+            this.traceLogger = Configuration.Instance.CreateTraceLogger("", "ArduinoST4 AxisPositionController " + axis.ToString());
             this.axis = axis;
             this.deviceController = deviceController;
             this.minusSlewRate = minusSlewRate;
