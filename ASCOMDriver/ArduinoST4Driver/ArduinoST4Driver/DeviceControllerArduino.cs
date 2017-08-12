@@ -29,7 +29,7 @@ namespace ASCOM.ArduinoST4
         /// <summary>
         /// Serial connection to the device
         /// </summary>
-        private Serial serialConnection = new Serial();
+        private Serial serialConnection;
 
         /// <summary>
         /// Whether the device is connected or not
@@ -49,6 +49,7 @@ namespace ASCOM.ArduinoST4
         public void Connect(String comPort)
         {
             traceLogger.LogMessage("Connected Set", "Connecting to port " + comPort);
+            serialConnection = new Serial();
             serialConnection.PortName = comPort;
             //57.6k
             serialConnection.Speed = SerialSpeed.ps57600;
@@ -69,6 +70,7 @@ namespace ASCOM.ArduinoST4
             {
                 //close serial connection when it failed
                 serialConnection.Connected = false;
+                serialConnection = null;
             }
         }
 
@@ -77,6 +79,10 @@ namespace ASCOM.ArduinoST4
         /// </summary>
         public void Disconnect()
         {
+            if (serialConnection == null)
+            {
+                return;
+            }
             //Tell bye-bye to the device
             CommandBool("DISCONNECT");
             this.connected = false;
@@ -105,7 +111,7 @@ namespace ASCOM.ArduinoST4
         {
             string ret = CommandString(command);
             //Successful commands should return OK
-            return ret.Equals("OK");
+            return "OK".Equals(ret);
         }
 
         /// <summary>
@@ -115,6 +121,10 @@ namespace ASCOM.ArduinoST4
         /// <returns>Response returned by the device</returns>
         public string CommandString(string command)
         {
+            if (!this.Connected)
+            {
+                return null;
+            }
             traceLogger.LogMessage("CommandString", "Sending command " + command);
             //All commands from and to the arduino ends with #
             serialConnection.Transmit(command + "#");
