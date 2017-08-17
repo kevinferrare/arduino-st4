@@ -504,7 +504,7 @@ namespace ASCOM.ArduinoST4
 
         private void CheckRightAscension(double value)
         {
-            if (value < 0 || value > 24)
+            if (value < 0 || value >= 24)
             {
                 traceLogger.LogMessage("TargetRightAscension SET", "Value is not in range 0..24, throwing exception");
                 throw new InvalidValueException("TargetRightAscension", value.ToString(), "0..24");

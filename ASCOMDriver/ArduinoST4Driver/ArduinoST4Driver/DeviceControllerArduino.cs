@@ -31,15 +31,9 @@ namespace ASCOM.ArduinoST4
         /// </summary>
         private Serial serialConnection;
 
-        /// <summary>
-        /// Whether the device is connected or not
-        /// </summary>
-        private Boolean connected;
-
         public DeviceControllerArduino()
         {
             traceLogger = Configuration.Instance.CreateTraceLogger("", "Arduino DeviceController");
-            connected = false;
         }
 
         /// <summary>
@@ -65,8 +59,8 @@ namespace ASCOM.ArduinoST4
             //The arduino will send "INITIALIZED" by itself once it is ready (can take several seconds)
             String initialMessage = ReadResponse();
             //Reset device and light up the LED
-            this.connected = CommandBool("CONNECT");
-            if (!this.connected)
+            this.Connected = CommandBool("CONNECT");
+            if (!this.Connected)
             {
                 //close serial connection when it failed
                 serialConnection.Connected = false;
@@ -85,21 +79,17 @@ namespace ASCOM.ArduinoST4
             }
             //Tell bye-bye to the device
             CommandBool("DISCONNECT");
-            this.connected = false;
+            this.Connected = false;
             traceLogger.LogMessage("Connected Set", "Disconnecting");
             serialConnection.Connected = false;
         }
 
         /// <summary>
-        /// Return true when connected
+        /// Whether the device is connected or not
         /// </summary>
         public bool Connected
         {
-            get
-            {
-                traceLogger.LogMessage("Connected Get", connected.ToString());
-                return this.connected;
-            }
+            get; private set;
         }
 
         /// <summary>
@@ -121,7 +111,7 @@ namespace ASCOM.ArduinoST4
         /// <returns>Response returned by the device</returns>
         public string CommandString(string command)
         {
-            if (!this.Connected)
+            if (serialConnection == null)
             {
                 return null;
             }
