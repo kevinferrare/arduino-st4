@@ -69,6 +69,10 @@ void setup()
   Serial.println("INITIALIZED#");
 }
 
+void resetPins(){
+  rightAscension.reset();
+  declination.reset();
+}
 
 void loop()
 {
@@ -111,9 +115,4 @@ void loop()
       Serial.println("OK#");
     }
   } 
-}
-
-void resetPins(){
-  rightAscension.reset();
-  declination.reset();
 }
