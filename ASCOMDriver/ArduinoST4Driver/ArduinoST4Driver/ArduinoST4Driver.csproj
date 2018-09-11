@@ -57,7 +57,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <RegisterForComInterop>false</RegisterForComInterop>
+    <RegisterForComInterop>true</RegisterForComInterop>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -88,7 +88,6 @@
     <Reference Include="ASCOM.Exceptions, Version=6.0.0.0, Culture=neutral, PublicKeyToken=565de7938946fba7, processorArchitecture=MSIL" />
     <Reference Include="ASCOM.SettingsProvider, Version=6.0.0.0, Culture=neutral, PublicKeyToken=565de7938946fba7, processorArchitecture=MSIL" />
     <Reference Include="ASCOM.Utilities, Version=6.0.0.0, Culture=neutral, PublicKeyToken=565de7938946fba7, processorArchitecture=MSIL" />
-    <Reference Include="ASCOM.Utilities.Video, Version=6.1.0.0, Culture=neutral, PublicKeyToken=565de7938946fba7, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Configuration.Install" />
@@ -104,9 +103,15 @@
     <Compile Include="AxisController.cs" />
     <Compile Include="Axis.cs" />
     <Compile Include="AxisMovementTracker.cs" />
+    <Compile Include="DeviceControllerFactory.cs" />
+    <Compile Include="TelescopeCommonAPI.cs" />
+    <Compile Include="Configuration.cs" />
     <Compile Include="Constants.cs" />
-    <Compile Include="DeviceController.cs" />
-    <Compile Include="Driver.cs" />
+    <Compile Include="IDeviceController.cs" />
+    <Compile Include="DeviceControllerArduino.cs" />
+    <Compile Include="DeviceControllerDummy.cs" />
+    <Compile Include="Telescope.cs" />
+    <Compile Include="DriverRegistrationManager.cs" />
     <Compile Include="Orientation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -126,6 +131,7 @@
     <Compile Include="SetupDialogForm.designer.cs">
       <DependentUpon>SetupDialogForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="TelescopeUnimplementedAPI.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">

@@ -5,8 +5,8 @@
 [Setup]
 AppID={{d4b5de5b-9b10-47eb-8d49-f91ee606f7f1}
 AppName=ASCOM ArduinoST4 Telescope Driver
-AppVerName=ASCOM ArduinoST4 Telescope Driver 1.0
-AppVersion=1.0
+AppVerName=ASCOM ArduinoST4 Telescope Driver 1.1
+AppVersion=1.1
 AppPublisher=Kevin Ferrare <kevinferrare@gmail.com>
 AppPublisherURL=mailto:kevinferrare@gmail.com
 AppSupportURL=https://code.google.com/p/arduino-st4/
